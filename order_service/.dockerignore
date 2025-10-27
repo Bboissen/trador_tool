@@ -1,0 +1,11 @@
+.git
+.gitignore
+archive/
+scripts/
+*.md
+*.log
+logs.txt
+.DS_Store
+node_modules/
+dist/
+build/
