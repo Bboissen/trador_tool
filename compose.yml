@@ -1,22 +1,14 @@
 name: trador-tool
 
 x-postgres-env: &postgres-env
-  POSTGRES_USER: ${POSTGRES_USER:-postgres}
+  POSTGRES_USER: ${DB_USER:-postgres}
   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
   POSTGRES_DB: ${POSTGRES_DB:-orders}
 
-x-gateway-env: &gateway-env
-  DB_HOST: db
-  DB_PORT: ${DB_PORT:-5432}
-  DB_USER: ${POSTGRES_USER:-postgres}
-  DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-  DB_NAME: ${POSTGRES_DB:-orders}
-  PORT: ${PORT:-8080}
 
 services:
   db:
-    build:
-      context: ./order_service
+    build: ./order_database
     environment: *postgres-env
     healthcheck:
       test:
@@ -24,7 +16,8 @@ services:
         - pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}
       interval: 2s
       timeout: 3s
-      retries: 60
+      retries: 30
+      start_period: 5s
     command:
       [
         "postgres",
@@ -37,27 +30,55 @@ services:
       - target: 5432
         published: ${POSTGRES_PUBLISHED_PORT:-54329}
         protocol: tcp
-    volumes:
-      - pgdata:/var/lib/postgresql/data
 
-  order-service:
-    build:
-      context: ./order-gateway
+    # Use named volume for data persistence between restarts (18+ expects /var/lib/postgresql)
+    volumes:
+      - pgdata:/var/lib/postgresql
+    # Explicitly map SQL files to ensure they are copied and run by postgres:18 image
+      - ./order_database/00_extensions.sql:/docker-entrypoint-initdb.d/00_extensions.sql:ro
+      - ./order_database/01_complete_setup.sql:/docker-entrypoint-initdb.d/01_complete_setup.sql:ro
+      - ./order_database/02_integrations.sql:/docker-entrypoint-initdb.d/02_integrations.sql:ro
+      - ./order_database/03_operations.sql:/docker-entrypoint-initdb.d/03_operations.sql:ro
+      - ./order_database/04_indexes_partitions.sql:/docker-entrypoint-initdb.d/04_indexes_partitions.sql:ro
+
+  order-router:
+    build: ./order_router
     environment:
-      <<: *gateway-env
+      DB_HOST: db
+      DB_PORT: 5432 # internal docker port for postgres container
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      DB_NAME: ${POSTGRES_DB:-orders}
+      PORT: 8080 # Internal HTTP port for health checks
+      GRPC_PORT: 9090 # Internal gRPC port
     depends_on:
       db:
         condition: service_healthy
     develop:
       watch:
         - action: rebuild
-          path: ./order-gateway
+          path: ./order_router
     ports:
-      - target: 8080
-        published: ${PORT:-8080}
-        protocol: tcp
-    profiles:
-      - app
+      - "${ORDER_ROUTER_GRPC_PORT:-9090}:9090"
+
+  # api-gateway:
+  #   build:
+  #     context: ./api-gateway
+  #   environment:
+  #     <<: *gateway-env
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   develop:
+  #     watch:
+  #       - action: rebuild
+  #         path: ./api-gateway
+  #   ports:
+  #     - target: 8080
+  #       published: ${PORT:-8080}
+  #       protocol: tcp
+  #   profiles:
+  #     - app
 
 volumes:
   pgdata:
