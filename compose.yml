@@ -1,0 +1,64 @@
+name: trador-tool
+
+x-postgres-env: &postgres-env
+  POSTGRES_USER: ${POSTGRES_USER:-postgres}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+  POSTGRES_DB: ${POSTGRES_DB:-orders}
+
+x-gateway-env: &gateway-env
+  DB_HOST: db
+  DB_PORT: ${DB_PORT:-5432}
+  DB_USER: ${POSTGRES_USER:-postgres}
+  DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+  DB_NAME: ${POSTGRES_DB:-orders}
+  PORT: ${PORT:-8080}
+
+services:
+  db:
+    build:
+      context: ./order_service
+    environment: *postgres-env
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}
+      interval: 2s
+      timeout: 3s
+      retries: 60
+    command:
+      [
+        "postgres",
+        "-c",
+        "log_statement=none",
+        "-c",
+        "shared_preload_libraries=pg_stat_statements"
+      ]
+    ports:
+      - target: 5432
+        published: ${POSTGRES_PUBLISHED_PORT:-54329}
+        protocol: tcp
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  order-service:
+    build:
+      context: ./order-gateway
+    environment:
+      <<: *gateway-env
+    depends_on:
+      db:
+        condition: service_healthy
+    develop:
+      watch:
+        - action: rebuild
+          path: ./order-gateway
+    ports:
+      - target: 8080
+        published: ${PORT:-8080}
+        protocol: tcp
+    profiles:
+      - app
+
+volumes:
+  pgdata:
+    driver: local

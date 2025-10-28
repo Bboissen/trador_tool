@@ -1,0 +1,11 @@
+version: v1
+
+plugins:
+  - plugin: go
+    out: order_router/pkg/pb
+    opt:
+      - paths=source_relative
+  - plugin: go-grpc
+    out: order_router/pkg/pb
+    opt:
+      - paths=source_relative
