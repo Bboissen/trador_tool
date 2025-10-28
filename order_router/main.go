@@ -4,18 +4,25 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
 
+	orderpb "order-gateway/pkg/pb/trading/order/v1"
+	"order-gateway/server"
+
 	"github.com/jackc/pgx/v5/pgxpool"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 type Config struct {
-	DBURL string
-	Host  string
-	Port  int
+	DBURL    string
+	Host     string
+	Port     int
+	GRPCPort int
 }
 
 func loadConfig() Config {
@@ -32,7 +39,9 @@ func loadConfig() Config {
 	h := getenv("HOST", "0.0.0.0")
 	pStr := getenv("PORT", "8080")
 	p, _ := strconv.Atoi(pStr)
-	return Config{DBURL: dbURL, Host: h, Port: p}
+	gpStr := getenv("GRPC_PORT", "9090")
+	gp, _ := strconv.Atoi(gpStr)
+	return Config{DBURL: dbURL, Host: h, Port: p, GRPCPort: gp}
 }
 
 func getenv(k, def string) string {
@@ -59,6 +68,22 @@ func main() {
 	} else {
 		log.Printf("connected to database")
 	}
+
+	// Start gRPC server (OrderService)
+	grpcAddr := fmt.Sprintf("%s:%d", cfg.Host, cfg.GRPCPort)
+	lis, err := net.Listen("tcp", grpcAddr)
+	if err != nil {
+		log.Fatalf("failed to listen on %s: %v", grpcAddr, err)
+	}
+	grpcServer := grpc.NewServer()
+	orderpb.RegisterOrderServiceServer(grpcServer, server.NewOrderService(pool))
+	reflection.Register(grpcServer)
+	go func() {
+		log.Printf("gRPC OrderService listening on %s", grpcAddr)
+		if err := grpcServer.Serve(lis); err != nil {
+			log.Fatalf("grpc server error: %v", err)
+		}
+	}()
 
 	mux := http.NewServeMux()
 
@@ -100,7 +125,7 @@ func main() {
 	})
 
 	addr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
-	log.Printf("order-service listening on %s", addr)
+	log.Printf("order-service HTTP listening on %s", addr)
 	if err := http.ListenAndServe(addr, mux); err != nil {
 		log.Fatalf("http server error: %v", err)
 	}

@@ -1,0 +1,20 @@
+version: "2"
+sql:
+  - engine: postgresql
+    schema:
+      - ../order_database/01_complete_setup.sql
+      - ../order_database/03_operations.sql
+    queries:
+      - ./queries
+    gen:
+      go:
+        out: internal/db
+        package: db
+        sql_package: "pgx/v5"
+        emit_json_tags: true
+        emit_prepared_queries: false
+        emit_empty_slices: true
+        emit_interface: false
+        overrides:
+          - db_type: "uuid"
+            go_type: "string"
