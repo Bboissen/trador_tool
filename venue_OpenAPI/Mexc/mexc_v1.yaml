@@ -1,0 +1,704 @@
+openapi: 3.0.0
+info:
+  title: MEXC V1 contract
+  version: 1.0.0
+  description: ""
+servers:
+  - url: "{{api_url}}"
+  - url: contract.mexc.com
+paths:
+  /api/v1/contract/ping:
+    get:
+      summary: Ping
+      tags:
+        - Quote
+      responses: {}
+  /api/v1/contract/detail:
+    get:
+      summary: ContractDetail
+      tags:
+        - Quote
+      responses: {}
+  /api/v1/contract/support_currencies:
+    get:
+      summary: SupporCurrencies
+      tags:
+        - Quote
+      responses: {}
+  /api/v1/contract/depth_commits/BTC_USDT/20:
+    get:
+      summary: DepthcommitsBySymbol
+      tags:
+        - Quote
+      responses: {}
+  /api/v1/contract/kline/BTC_USDT:
+    get:
+      summary: KlineBySymbol
+      tags:
+        - Quote
+      parameters:
+        - name: interval
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: start
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: end
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /api/v1/contract/kline/index_price/BTC_USDT:
+    get:
+      summary: IndexPriceKlineBySymbol
+      tags:
+        - Quote
+      parameters:
+        - name: interval
+          in: query
+          required: false
+          description: Min1、Min5、Min15、Min30、Min60、Hour4、Hour8、Day1、Week1、Month1
+          schema:
+            type: string
+        - name: start
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: end
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /api/v1/contract/kline/fair_price/BTC_USDT:
+    get:
+      summary: FairPriceKlineBySymbol
+      tags:
+        - Quote
+      parameters:
+        - name: interval
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: start
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: end
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /api/v1/contract/deals/BTC_USDT:
+    get:
+      summary: DealsBySymbol
+      tags:
+        - Quote
+      responses: {}
+  /api/v1/contract/ticker:
+    get:
+      summary: Ticker
+      tags:
+        - Quote
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v1/contract/risk_reverse:
+    get:
+      summary: RiskReverse
+      tags:
+        - Quote
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v1/contract/risk_reverse/history:
+    get:
+      summary: RiskReverseHistory
+      tags:
+        - Quote
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page_num
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /api/v1/contract/funding_rate/history:
+    get:
+      summary: FundingRateHistory
+      tags:
+        - Quote
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page_num
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /api/v1/private/account/assets:
+    get:
+      summary: Assets
+      tags:
+        - Accounts and Transactions
+      responses: {}
+  /api/v1/private/account/asset/USDT:
+    get:
+      summary: AssetByCurrency
+      tags:
+        - Accounts and Transactions
+      responses: {}
+  /api/v1/private/account/transfer_record:
+    get:
+      summary: TransferRecord
+      tags:
+        - Accounts and Transactions
+      parameters:
+        - name: currency
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page_num
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /api/v1/private/position/list/history_positions:
+    get:
+      summary: HistoryPositions
+      tags:
+        - Accounts and Transactions
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page_num
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /api/v1/private/order/list/open_orders/BTC_USDT:
+    get:
+      summary: OpenOrders
+      tags:
+        - Accounts and Transactions
+      parameters:
+        - name: page_num
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /api/v1/private/order/list/history_orders:
+    get:
+      summary: HistoryOrders
+      tags:
+        - Accounts and Transactions
+      parameters:
+        - name: page_num
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: states
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: start_time
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: end_time
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: side
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v1/private/order/get/218699511659380224:
+    get:
+      summary: QueryOrderById
+      tags:
+        - Accounts and Transactions
+      responses: {}
+  /api/v1/private/order/batch_query:
+    get:
+      summary: BatchQueryById
+      tags:
+        - Accounts and Transactions
+      parameters:
+        - name: order_ids
+          in: query
+          required: false
+          description: >-
+            order number array，can be separated by "," for example :order_ids =
+            1,2,3(maximum 50 orders):
+          schema:
+            type: integer
+      responses: {}
+  /api/v1/private/order/deal_details/2543756756876:
+    get:
+      summary: DealDetails
+      tags:
+        - Accounts and Transactions
+      responses: {}
+  /api/v1/private/order/list/order_deals:
+    get:
+      summary: OrderDeals
+      tags:
+        - Accounts and Transactions
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page_num
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: start_time
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: end_time
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /api/v1/private/planorder/list/orders:
+    get:
+      summary: Planorder
+      tags:
+        - Accounts and Transactions
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: states
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: start_time
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: end_time
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page_num
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /api/v1/private/stoporder/list/orders:
+    get:
+      summary: Stoporder
+      tags:
+        - Accounts and Transactions
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: states
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: start_time
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: end_time
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page_num
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /api/v1/private/account/risk_limit:
+    get:
+      summary: RiskLimit
+      tags:
+        - Accounts and Transactions
+      responses: {}
+  /api/v1/private/account/tiered_fee_rate:
+    get:
+      summary: TieredFeeRate
+      tags:
+        - Accounts and Transactions
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v1/private/position/change_margin:
+    post:
+      summary: ChangeMargin
+      tags:
+        - Accounts and Transactions
+      parameters:
+        - name: positionId
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: amount
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: type
+          in: query
+          required: false
+          description: "type ,ADD: increase,SUB: decrease"
+          schema:
+            type: string
+      responses: {}
+  /api/v1/private/position/leverage:
+    get:
+      summary: Leverage
+      tags:
+        - Accounts and Transactions
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v1/private/position/change_leverage:
+    post:
+      summary: ChangeLeverage
+      tags:
+        - Accounts and Transactions
+      responses: {}
+  /api/v1/private/position/change_position_mode:
+    post:
+      summary: ChangePositionMode
+      tags:
+        - Accounts and Transactions
+      responses: {}
+  /api/v1/private/order/submit:
+    post:
+      summary: PlaceNewOrder
+      tags:
+        - Accounts and Transactions
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                symbol:
+                  type: string
+                price:
+                  type: string
+                vol:
+                  type: integer
+                leverage:
+                  type: integer
+                side:
+                  type: integer
+                type:
+                  type: integer
+                openType:
+                  type: integer
+                positionMode:
+                  type: integer
+  /api/v1/private/order/cancel:
+    post:
+      summary: CancelOrderById
+      tags:
+        - Accounts and Transactions
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+  /api/v1/private/order/cancel_with_external:
+    post:
+      summary: CancelWithExternal
+      tags:
+        - Accounts and Transactions
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                symbol:
+                  type: string
+                externalOid:
+                  type: string
+                  format: utc-millisec
+  /api/v1/private/order/cancel_all:
+    post:
+      summary: CancelAll
+      tags:
+        - Accounts and Transactions
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                symbol:
+                  type: string
+  /api/v1/private/planorder/place:
+    post:
+      summary: PlacePlanOrder
+      tags:
+        - Accounts and Transactions
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                symbol:
+                  type: string
+                price:
+                  type: string
+                vol:
+                  type: integer
+                leverage:
+                  type: integer
+                side:
+                  type: integer
+                openType:
+                  type: integer
+                triggerPrice:
+                  type: number
+                triggerType:
+                  type: integer
+                executeCycle:
+                  type: integer
+                orderType:
+                  type: integer
+                trend:
+                  type: integer
+  /api/v1/private/planorder/cancel:
+    post:
+      summary: CancelPlanOrder
+      tags:
+        - Accounts and Transactions
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+  /api/v1/private/planorder/cancel_all:
+    post:
+      summary: CancelAllPlanOrder
+      tags:
+        - Accounts and Transactions
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                symbol:
+                  type: string
+  /api/v1/private/stoporder/cancel:
+    post:
+      summary: CancelStopOrder
+      tags:
+        - Accounts and Transactions
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  stopPlanOrderId:
+                    type: string
+                    format: utc-millisec
+  /api/v1/private/stoporder/cancel_all:
+    post:
+      summary: CancelAllStopOrder
+      tags:
+        - Accounts and Transactions
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+  /api/v1/private/stoporder/change_price:
+    post:
+      summary: StoporderChangePrice
+      tags:
+        - Accounts and Transactions
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: string
+                  format: utc-millisec
+                stopLossPrice:
+                  type: string
+                takeProfitPrice:
+                  type: string
+  /api/v1/private/stoporder/change_plan_price:
+    post:
+      summary: StopOrderChangePlanPrice
+      tags:
+        - Accounts and Transactions
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                stopPlanOrderId:
+                  type: string
+                  format: utc-millisec
+                stopLossPrice:
+                  type: string

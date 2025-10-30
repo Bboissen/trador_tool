@@ -1,0 +1,2098 @@
+openapi: 3.0.0
+info:
+  title: MEXC V3
+  version: 1.0.0
+  description: ""
+servers:
+  - url: "{{api_url}}"
+paths:
+  /api/v3/ping:
+    get:
+      summary: Test Connectivity
+      tags:
+        - Market Date Endpoints
+      responses: {}
+  /api/v3/time:
+    get:
+      summary: Check Server Time
+      tags:
+        - Market Date Endpoints
+      responses: {}
+  /api/v3/exchangeInfo:
+    get:
+      summary: Exchange Information
+      tags:
+        - Market Date Endpoints
+      responses: {}
+  /api/v3/depth:
+    get:
+      summary: Order Book
+      tags:
+        - Market Date Endpoints
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          description: Symbol
+          schema:
+            type: string
+      responses: {}
+  /api/v3/trades:
+    get:
+      summary: Recent Trades List
+      tags:
+        - Market Date Endpoints
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          description: Symbol
+          schema:
+            type: string
+      responses: {}
+  /api/v3/historicalTrades:
+    get:
+      summary: Old Trade Lookup
+      tags:
+        - Market Date Endpoints
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          description: Symbol
+          schema:
+            type: string
+      responses: {}
+  /api/v3/aggTrades:
+    get:
+      summary: Compressed/Aggregate Trades List
+      tags:
+        - Market Date Endpoints
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/klines:
+    get:
+      summary: Kline/Candlestick Data
+      tags:
+        - Market Date Endpoints
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          description: Symbol
+          schema:
+            type: string
+        - name: interval
+          in: query
+          required: false
+          description: "ENUM: Kline interval"
+          schema:
+            type: integer
+      responses: {}
+  /api/v3/avgPrice:
+    get:
+      summary: Current Average Price
+      tags:
+        - Market Date Endpoints
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          description: Symbol
+          schema:
+            type: string
+      responses: {}
+  /api/v3/ticker/24hr:
+    get:
+      summary: 24hr Ticker Price Change Statistics
+      tags:
+        - Market Date Endpoints
+      responses: {}
+  /api/v3/ticker/price:
+    get:
+      summary: Symbol Price Ticker
+      tags:
+        - Market Date Endpoints
+      responses: {}
+  /api/v3/ticker/bookTicker:
+    get:
+      summary: Symbol Order Book Ticker
+      tags:
+        - Market Date Endpoints
+      responses: {}
+  /api/v3/defaultSymbols:
+    get:
+      summary: Default Symbols
+      tags:
+        - Market Date Endpoints
+      responses: {}
+  /api/v3/order/test:
+    post:
+      summary: Test New Order
+      tags:
+        - Spot Account/Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          description: Symbol
+          schema:
+            type: string
+        - name: side
+          in: query
+          required: false
+          description: ENUM：Order Side
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          description: ENUM：Order Type
+          schema:
+            type: string
+        - name: quantity
+          in: query
+          required: false
+          description: Quantity
+          schema:
+            type: integer
+        - name: price
+          in: query
+          required: false
+          description: Price
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/order:
+    post:
+      summary: New Order
+      tags:
+        - Spot Account/Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          description: Symbol
+          schema:
+            type: string
+        - name: side
+          in: query
+          required: false
+          description: ENUM：Order Side
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          description: "ENUM：Order Type "
+          schema:
+            type: string
+        - name: quantity
+          in: query
+          required: false
+          description: Quantity
+          schema:
+            type: integer
+        - name: quoteOrderQty
+          in: query
+          required: false
+          description: "Quote order quantity (For type: MARKET)"
+          schema:
+            type: integer
+        - name: price
+          in: query
+          required: false
+          description: Price
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+    delete:
+      summary: Cancel Orde
+      tags:
+        - Spot Account/Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          description: Symbol
+          schema:
+            type: string
+        - name: orderId
+          in: query
+          required: false
+          description: Order id
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+    get:
+      summary: Query Order
+      tags:
+        - Spot Account/Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          description: Symbol
+          schema:
+            type: string
+        - name: orderId
+          in: query
+          required: false
+          description: Order id
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/openOrders:
+    delete:
+      summary: Cancel all Open Orders on a Symbol
+      tags:
+        - Spot Account/Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          description: Symbol
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+    get:
+      summary: Current Open Orders
+      tags:
+        - Spot Account/Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          description: Symbol
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/allOrders:
+    get:
+      summary: All Orders
+      tags:
+        - Spot Account/Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          description: Symbol
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/account:
+    get:
+      summary: Account Information
+      tags:
+        - Spot Account/Trade
+      parameters:
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/myTrades:
+    get:
+      summary: Account Trade List
+      tags:
+        - Spot Account/Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          description: Symbol
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/selfSymbols:
+    get:
+      summary: Query Self Symbols
+      tags:
+        - Spot Account/Trade
+      parameters:
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/mxDeduct/enable:
+    post:
+      summary: MxDeduct enable
+      tags:
+        - Spot Account/Trade
+      parameters:
+        - name: mxDeductEnable
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+    get:
+      summary: Query MxDeduct
+      tags:
+        - Spot Account/Trade
+      parameters:
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/etf/info:
+    get:
+      summary: ETF info
+      tags:
+        - EFT
+      responses: {}
+  /api/v3/capital/withdraw/apply:
+    post:
+      summary: Withdraw Apply
+      tags:
+        - Wallet
+      parameters:
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: coin
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: withdrawOrderId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: network
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: address
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: amount
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: remark
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/capital/deposit/hisrec:
+    get:
+      summary: Query Deposit Hisrec
+      tags:
+        - Wallet
+      parameters:
+        - name: coin
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/capital/config/getall:
+    get:
+      summary: Query All Coins
+      tags:
+        - Wallet
+      parameters:
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/broker/sub-account/apiKey:
+    post:
+      summary: Get Listen Key
+      tags:
+        - Wallet
+      parameters:
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subAccount:
+                  type: string
+                note:
+                  type: string
+                permissions:
+                  type: string
+  /api/v3/capital/transfer:
+    post:
+      summary: Transfer
+      tags:
+        - Wallet
+      parameters:
+        - name: fromAccountType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: toAccountType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: amount
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: asset
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+    get:
+      summary: Transfer Record
+      tags:
+        - Wallet
+      parameters:
+        - name: fromAccountType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: toAccountType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: startTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: endTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/capital/withdraw/history:
+    get:
+      summary: Withdraw History
+      tags:
+        - Wallet
+      parameters:
+        - name: coin
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/capital/transfer/tranId:
+    get:
+      summary: Query Transfer By TranId
+      tags:
+        - Wallet
+      parameters:
+        - name: tranId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/capital/deposit/address:
+    post:
+      summary: Generate Deposit Address
+      tags:
+        - Wallet
+      parameters:
+        - name: coin
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: network
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: remark
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+    get:
+      summary: Query Deposit Address
+      tags:
+        - Wallet
+      parameters:
+        - name: coin
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: amount
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: remark
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/capital/convert/list:
+    get:
+      summary: Get Assets That Can Be Converted Into MX
+      tags:
+        - Wallet
+      parameters:
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/capital/convert:
+    post:
+      summary: Dust Transfer
+      tags:
+        - Wallet
+      parameters:
+        - name: asset
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+    get:
+      summary: DustLog
+      tags:
+        - Wallet
+      parameters:
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/margin/tradeMode:
+    post:
+      summary: Change Trade Mode
+      tags:
+        - Margin
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: tradeMode
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/margin/order:
+    post:
+      summary: Margin Account New Order
+      tags:
+        - Margin
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: side
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: quantity
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: price
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+    delete:
+      summary: Margin Account Cancel Order
+      tags:
+        - Margin
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: orderId
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+    get:
+      summary: Query Margin Account's order
+      tags:
+        - Margin
+      parameters:
+        - name: orderId
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/margin/loan:
+    post:
+      summary: Margin Account Borrow
+      tags:
+        - Margin
+      parameters:
+        - name: asset
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: isIsolated
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: amount
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+    get:
+      summary: Query Loan Record
+      tags:
+        - Margin
+      parameters:
+        - name: asset
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/margin/repay:
+    post:
+      summary: Margin Account Repay
+      tags:
+        - Margin
+      parameters:
+        - name: asset
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: amount
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: borrowId
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+    get:
+      summary: Query Repay Record
+      tags:
+        - Margin
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: asset
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/margin/openOrders:
+    delete:
+      summary: Margin Account Cancel all Open Orders on a Symbol
+      tags:
+        - Margin
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+    get:
+      summary: Query Margin Account's Open Order
+      tags:
+        - Margin
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/margin/allOrders:
+    get:
+      summary: Query Margin Account's All Order
+      tags:
+        - Margin
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/margin/myTrades:
+    get:
+      summary: Query Margin Account's Trade List
+      tags:
+        - Margin
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/margin/maxTransferable:
+    get:
+      summary: Query Margin Account's maxTransferable
+      tags:
+        - Margin
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: asset
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/margin/priceIndex:
+    get:
+      summary: Query Margin Account's priceIndex
+      tags:
+        - Margin
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/margin/isolated/account:
+    get:
+      summary: Query Isolated Margin Account Info
+      tags:
+        - Margin
+      parameters:
+        - name: symbols
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/margin/trigerOrder:
+    get:
+      summary: Query Margin Account's trigerOrder
+      tags:
+        - Margin
+      parameters:
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/margin/maxBorrowable:
+    get:
+      summary: Query Margin Account's maxBorrowable
+      tags:
+        - Margin
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: asset
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/margin/isolated/pair:
+    get:
+      summary: Query Solated Pair
+      tags:
+        - Margin
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/margin/forceLiquidationRec:
+    get:
+      summary: Query forceLiquidationRec
+      tags:
+        - Margin
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/sub-account/virtualSubAccount:
+    post:
+      summary: new virtualSubAccount
+      tags:
+        - Parent child account
+      parameters:
+        - name: subAccount
+          in: query
+          required: false
+          description: subAccount
+          schema:
+            type: string
+        - name: note
+          in: query
+          required: false
+          description: remarks
+          schema:
+            type: string
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/sub-account/list:
+    get:
+      summary: Query sub-account list
+      tags:
+        - Parent child account
+      parameters:
+        - name: subAccount
+          in: query
+          required: false
+          description: subAccount
+          schema:
+            type: string
+        - name: isFreeze
+          in: query
+          required: false
+          description: true or false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/sub-account/apiKey:
+    post:
+      summary: new sub-account apiKey
+      tags:
+        - Parent child account
+      parameters:
+        - name: subAccount
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: note
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: permissions
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ip
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+    get:
+      summary: Query sub-account apiKey
+      tags:
+        - Parent child account
+      parameters:
+        - name: subAccount
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+    delete:
+      summary: Delete sub-account apiKey
+      tags:
+        - Parent child account
+      parameters:
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: subAccount
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: apiKey
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/capital/sub-account/universalTransfer:
+    post:
+      summary: Sub-account UniversalTransfer
+      tags:
+        - Parent child account
+      parameters:
+        - name: asset
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: amount
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: fromAccountType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: fromAccount
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: toAccountType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: toAccount
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: startTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: clientTranId
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: endTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+    get:
+      summary: Query Sub-account UniversalTransfer Record
+      tags:
+        - Parent child account
+      parameters:
+        - name: asset
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: amount
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: fromAccountType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: fromAccount
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: toAccountType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: toAccount
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: startTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/sub-account/futures:
+    post:
+      summary: Enable Futures For Sub-account
+      tags:
+        - Parent child account
+      parameters:
+        - name: subAccount
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/sub-account/margin:
+    post:
+      summary: Enable Margin For Sub-account
+      tags:
+        - Parent child account
+      parameters:
+        - name: subAccount
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/rebate/taxQuery:
+    get:
+      summary: Get Rebate History Records
+      tags:
+        - Rebate
+      parameters:
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/rebate/detail:
+    get:
+      summary: Get Rebate Records Detail
+      tags:
+        - Rebate
+      parameters:
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/rebate/detail/kickback:
+    get:
+      summary: Get Self Rebate Records Detail
+      tags:
+        - Rebate
+      parameters:
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/v3/rebate/referCode:
+    get:
+      summary: Query ReferCode
+      tags:
+        - Rebate
+      parameters:
+        - name: recvWindow
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: timestamp
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: signature
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: x-mexc-apikey
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}

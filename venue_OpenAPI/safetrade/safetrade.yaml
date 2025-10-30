@@ -1,0 +1,1501 @@
+openapi: 3.0.1
+info:
+  title: Safe Trade REST API
+  description: |-
+    API Documentation for the safe.trade REST API
+    <h1>Endpoint URL</h1>
+    <code>https://safe.trade/api/v2</code>
+    <h1>Authentication</h1>
+    <p>There are two authentication methods available for you to choose from. Basic Auth & HmacSha256 Signed Requests. Signed requests are more secure as it prevents replay attacks and accidental duplicate calls.</p>
+    <h1>Find a library to use and other examples in our GitHub:</h1>
+    <p>GitHub: <a href="https://github.com/safetrade-exchange/example-client" target="_blank">https://github.com/safetrade-exchange/example-client</a></p>
+    <h1>Error Codes</h1>
+    <table><thead><tr><td>Error Code</td><td>Message</td><td>Details</td></tr></thead><tbody><tr><td>400</td><td>Bad Request</td><td>Server cannot process request is perceived to be a client error</td></tr><tr><td>401</td><td>Unauthorized</td><td>Must be authenticated</td></tr><tr><td>403</td><td>Forbidden</td><td></td></tr><tr><td>404</td><td>Not Found</td><td>Record not found</td></tr><tr><td>422</td><td>Unprocessable Entity</td><td>Input not valid</td></tr><tr><td>500</td><td>Internal Server Error</td><td></td></tr></tbody></table>
+    <h1>Websocket channels</h1>
+    <table><thead><tr><td>Channel</td><td>Type</td><td>Description</td></tr></thead><tbody><tr><td>global.tickers</td><td>Public</td><td>Get list tickers by market</td></tr><tr><td>&lt;market&gt;.trades</td><td>Public</td><td>Get list trades in market</td></tr><tr><td>&lt;market&gt;.depth</td><td>Public</td><td>Get depth in market</td></tr><tr><td>order</td><td>Private</td><td>Get your orders lastest</td></tr><tr><td>trade</td><td>Private</td><td>Get your trades lastest</td></tr><tr><td>balance</td><td>Private</td><td>Get your balances lastest</td></tr></tbody></table>
+  contact: {}
+  version: "1.0"
+servers:
+- url: //safe.trade/api/v2
+paths:
+  /trade/account/balances/spot:
+    get:
+      tags:
+      - Account
+      summary: Get list of spot accounts
+      responses:
+        "200":
+          description: List of spot accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/account_entities.Account'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/account/beneficiaries:
+    get:
+      tags:
+      - Account
+      summary: Get beneficiaries
+      parameters:
+      - name: state
+        in: query
+        description: State beneficiary
+        schema:
+          type: string
+          enum:
+          - pending
+          - active
+          - disabled
+      - name: blockchain_key
+        in: query
+        description: Blockchain Key
+        schema:
+          type: string
+      - name: currency_id
+        in: query
+        description: Such as 'usdt'
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        description: Limit
+        schema:
+          type: integer
+          default: 100
+      responses:
+        "200":
+          description: List beneficiaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/account_entities.Beneficiary'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/account/deposit_address/{currency_id}:
+    get:
+      tags:
+      - Account
+      summary: Get deposit address
+      parameters:
+      - name: currency_id
+        in: path
+        description: Such as 'usdt'
+        required: true
+        schema:
+          type: string
+      - name: network
+        in: query
+        description: Network
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Deposit address information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/account_entities.DepositAddress'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/account/deposits:
+    get:
+      tags:
+      - Account
+      summary: Get list deposit
+      parameters:
+      - name: currency
+        in: query
+        description: Such as 'usdt'
+        schema:
+          type: string
+      - name: status
+        in: query
+        description: Status
+        schema:
+          type: string
+          enum:
+          - submitted
+          - canceled
+          - rejected
+          - accepted
+          - processing
+          - skipped
+          - collecting
+          - collected
+          - fee_collecting
+          - fee_processing
+          - fee_collected
+          - errored
+      - name: blockchain_key
+        in: query
+        description: Blockchain Key
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        description: Limit
+        schema:
+          type: integer
+          default: 100
+      - name: order_by
+        in: query
+        description: Order By
+        schema:
+          type: string
+      - name: ordering
+        in: query
+        description: Ordering
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      - name: time_from
+        in: query
+        description: Unix second timestamp. Such like 1691239429
+        schema:
+          type: string
+      - name: time_to
+        in: query
+        description: Unix second timestamp. Such like 1691239429
+        schema:
+          type: string
+      responses:
+        "200":
+          description: List deposits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/account_entities.Deposit'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/account/deposits/{txid}:
+    get:
+      tags:
+      - Account
+      summary: Get deposit by TxID
+      parameters:
+      - name: txid
+        in: path
+        description: TxID
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Deposit information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/account_entities.Deposit'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/account/members/me:
+    get:
+      tags:
+      - Account
+      summary: Get current member
+      responses:
+        "200":
+          description: Current member information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/account_entities.Member'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/account/withdraws:
+    get:
+      tags:
+      - Account
+      summary: Get list withdraw
+      parameters:
+      - name: currency
+        in: query
+        description: Such as 'usdt'
+        schema:
+          type: string
+      - name: status
+        in: query
+        description: Status
+        schema:
+          type: string
+          enum:
+          - prepared
+          - canceled
+          - accepted
+          - skipped
+          - to_reject
+          - rejected
+          - processing
+          - under_review
+          - succeed
+          - failed
+          - errored
+          - confirming
+      - name: blockchain_key
+        in: query
+        description: Blockchain Key
+        schema:
+          type: string
+      - name: rid
+        in: query
+        description: Rid
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        description: Limit
+        schema:
+          type: integer
+          default: 100
+      - name: order_by
+        in: query
+        description: Order By
+        schema:
+          type: string
+      - name: ordering
+        in: query
+        description: Ordering
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      - name: time_from
+        in: query
+        description: Unix second timestamp. Such like 1691239429
+        schema:
+          type: string
+      - name: time_to
+        in: query
+        description: Unix second timestamp. Such like 1691239429
+        schema:
+          type: string
+      responses:
+        "200":
+          description: List withdraws
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/account_entities.Withdraw'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+    post:
+      tags:
+      - Account
+      summary: Create withdraw
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/account.CreateWithdrawParams'
+        required: true
+      responses:
+        "201":
+          description: Create withdraw
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/account_entities.Withdraw'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+      x-codegen-request-body-name: Request
+  /trade/account/withdraws/generate_code:
+    post:
+      tags:
+      - Account
+      summary: Generate withdraw code
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/account.GenerateWithdrawCodeParams'
+        required: true
+      responses:
+        "201":
+          description: Generate withdraw code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.StatusResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+      x-codegen-request-body-name: Request
+  /trade/market/orders:
+    get:
+      tags:
+      - Market
+      summary: Get orders
+      parameters:
+      - name: market
+        in: query
+        description: Such as 'btcusdt'
+        schema:
+          type: string
+      - name: state
+        in: query
+        description: "State includes: rejected, cancel, pending, wait, done"
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: type
+        in: query
+        description: "Type includes: limit, market, market_quote, stop_limit"
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: side
+        in: query
+        description: "Side includes: buy, sell"
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: base_unit
+        in: query
+        description: Base Unit
+        schema:
+          type: string
+      - name: quote_unit
+        in: query
+        description: Quote Unit
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        description: Limit
+        schema:
+          type: integer
+          default: 100
+      - name: order_by
+        in: query
+        description: Order By
+        schema:
+          type: string
+      - name: ordering
+        in: query
+        description: Ordering
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      - name: time_from
+        in: query
+        description: Unix second timestamp. Such like 1691239429
+        schema:
+          type: string
+      - name: time_to
+        in: query
+        description: Unix second timestamp. Such like 1691239429
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Get orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/market_entities.Order'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+    post:
+      tags:
+      - Market
+      summary: Create order
+      requestBody:
+        description: Request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/market.CreateOrderParams'
+        required: true
+      responses:
+        "201":
+          description: Create order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/market_entities.Order'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+      x-codegen-request-body-name: Request
+  /trade/market/orders/{id}:
+    get:
+      tags:
+      - Market
+      summary: Get order
+      parameters:
+      - name: id
+        in: path
+        description: ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Get order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/market_entities.Order'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/market/orders/{id}/cancel:
+    post:
+      tags:
+      - Market
+      summary: Cancel order
+      parameters:
+      - name: id
+        in: path
+        description: ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        "201":
+          description: Cancel order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/market_entities.Order'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/market/trades:
+    get:
+      tags:
+      - Market
+      summary: Get trades
+      parameters:
+      - name: market
+        in: query
+        description: Such as 'btcusdt'
+        schema:
+          type: string
+      - name: side
+        in: query
+        description: "Side includes: buy, sell"
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: page
+        in: query
+        description: Page
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        description: Limit
+        schema:
+          type: integer
+          default: 100
+      - name: order_by
+        in: query
+        description: Order By
+        schema:
+          type: string
+      - name: ordering
+        in: query
+        description: Ordering
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      - name: time_from
+        in: query
+        description: Unix second timestamp. Such like 1691239429
+        schema:
+          type: string
+      - name: time_to
+        in: query
+        description: Unix second timestamp. Such like 1691239429
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Get trades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/market_entities.Trade'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/market/trades/{id}:
+    get:
+      tags:
+      - Market
+      summary: Get trade
+      parameters:
+      - name: id
+        in: path
+        description: ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Get trade
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/market_entities.Trade'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/public/currencies:
+    get:
+      tags:
+      - Public
+      summary: Get currencies
+      responses:
+        "200":
+          description: Currencies information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/public_entities.Currency'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/public/currencies/{id}:
+    get:
+      tags:
+      - Public
+      summary: Get currency by ID
+      parameters:
+      - name: id
+        in: path
+        description: Such like 'usdt'
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Currency information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/public_entities.Currency'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/public/markets:
+    get:
+      tags:
+      - Public
+      summary: Get markets
+      responses:
+        "200":
+          description: Markets information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/public_entities.Market'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/public/markets/{id}:
+    get:
+      tags:
+      - Public
+      summary: Get market by ID
+      parameters:
+      - name: id
+        in: path
+        description: Such like 'btcusdt'
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Market information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/public_entities.Market'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/public/markets/{id}/depth:
+    get:
+      tags:
+      - Public
+      summary: Get market depth
+      parameters:
+      - name: id
+        in: path
+        description: Such like 'btcusdt'
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Limit number asks and bids in depth response
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Market depth information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/public.Depth'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/public/markets/{id}/k-line:
+    get:
+      tags:
+      - Public
+      summary: Get klines in market
+      parameters:
+      - name: id
+        in: path
+        description: Such like 'btcusdt'
+        required: true
+        schema:
+          type: string
+      - name: period
+        in: query
+        description: Period
+        schema:
+          type: integer
+      - name: time_from
+        in: query
+        description: Time from
+        schema:
+          type: integer
+      - name: time_to
+        in: query
+        description: Time to
+        schema:
+          type: integer
+      - name: page
+        in: query
+        description: Page
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        description: Limit
+        schema:
+          type: integer
+          default: 30
+      responses:
+        "200":
+          description: Klines in market
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties: {}
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/public/markets/{id}/trades:
+    get:
+      tags:
+      - Public
+      summary: Get all trades in market
+      parameters:
+      - name: id
+        in: path
+        description: Such like 'btcusdt'
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page
+        schema:
+          type: integer
+      - name: limit
+        in: query
+        description: Limit
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: All trades in market
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/public_entities.Trade'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/public/tickers:
+    get:
+      tags:
+      - Public
+      summary: Get tickers
+      responses:
+        "200":
+          description: Ticker information of others market
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/pkg_ticker.Ticker'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/public/tickers/{market}:
+    get:
+      tags:
+      - Public
+      summary: Get ticker by market
+      parameters:
+      - name: market
+        in: path
+        description: Such like 'btcusdt'
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Ticker information by market
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg_ticker.Ticker'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /trade/public/trading_fees:
+    get:
+      tags:
+      - Public
+      summary: Get trading fees
+      parameters:
+      - name: market_id
+        in: query
+        description: Such as 'btcusdt'
+        schema:
+          type: string
+      - name: group
+        in: query
+        description: Group
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Page
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        description: Limit
+        schema:
+          type: integer
+          default: 100
+      - name: order_by
+        in: query
+        description: Order By
+        schema:
+          type: string
+      - name: ordering
+        in: query
+        description: Ordering
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      responses:
+        "200":
+          description: List trading fee
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/public_entities.TradingFee'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+  /websocket/private:
+    get:
+      tags:
+      - Websocket
+      summary: Private websocket
+      description: "This endpoint is only available to authenticated users. After\
+        \ connect to websocket, you must subscribe to get data"
+      requestBody:
+        description: Message
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/entities.WebsocketMessage'
+        required: true
+      responses:
+        "200":
+          description: The data returned is based on your subscription
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+      x-codegen-request-body-name: Message
+  /websocket/public:
+    get:
+      tags:
+      - Websocket
+      summary: Public websocket
+      description: "After connect to websocket, you must subscribe to get data"
+      requestBody:
+        description: Message
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/entities.WebsocketMessage'
+        required: true
+      responses:
+        "200":
+          description: The data returned is based on your subscription
+          content:
+            application/json:
+              schema:
+                type: string
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pkg.Error'
+      x-codegen-request-body-name: Message
+components:
+  schemas:
+    account.CreateWithdrawParams:
+      required:
+      - amount
+      - blockchain_key
+      - currency
+      type: object
+      properties:
+        address:
+          type: string
+          description: Required without beneficiary_id
+        amount:
+          type: number
+        beneficiary_id:
+          type: integer
+        blockchain_key:
+          type: string
+        currency:
+          type: string
+        email_code:
+          type: string
+          description: Required without beneficiary_id
+        note:
+          type: string
+        otp_code:
+          type: string
+        phone_code:
+          type: string
+    account.GenerateWithdrawCodeParams:
+      required:
+      - address
+      - amount
+      - blockchain_key
+      - currency
+      - type
+      type: object
+      properties:
+        address:
+          type: string
+        amount:
+          type: number
+        blockchain_key:
+          type: string
+        currency:
+          type: string
+        type:
+          type: string
+          enum:
+          - email
+          - phone
+    account_entities.Account:
+      type: object
+      properties:
+        balance:
+          type: number
+        currency:
+          type: string
+        deposit_addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/account_entities.DepositAddress'
+        locked:
+          type: number
+        type:
+          $ref: '#/components/schemas/models.AccountType'
+    account_entities.Beneficiary:
+      type: object
+      properties:
+        address:
+          type: string
+        blockchain_key:
+          type: string
+        created_at:
+          type: string
+        currency_id:
+          type: string
+        description:
+          type: string
+        id:
+          type: integer
+        label:
+          type: string
+        state:
+          type: string
+        updated_at:
+          type: string
+    account_entities.Deposit:
+      type: object
+      properties:
+        amount:
+          type: number
+        blockchain_key:
+          type: string
+        completed_at:
+          type: string
+        created_at:
+          type: string
+        currency:
+          type: string
+        from_address:
+          type: string
+        id:
+          type: integer
+        status:
+          type: string
+        txid:
+          type: string
+        updated_at:
+          type: string
+    account_entities.DepositAddress:
+      type: object
+      properties:
+        address:
+          type: string
+        currencies:
+          type: array
+          items:
+            type: string
+        network:
+          type: string
+    account_entities.Member:
+      type: object
+      properties:
+        created_at:
+          type: string
+        email:
+          type: string
+        group:
+          type: string
+        id:
+          type: integer
+        level:
+          type: integer
+        role:
+          type: string
+        state:
+          type: string
+        uid:
+          type: string
+        updated_at:
+          type: string
+        username:
+          type: string
+    account_entities.Withdraw:
+      type: object
+      properties:
+        amount:
+          type: number
+        beneficiary_id:
+          type: integer
+        block_number:
+          type: integer
+        blockchain_key:
+          type: string
+        completed_at:
+          type: string
+        created_at:
+          type: string
+        currency_id:
+          type: string
+        fee:
+          type: number
+        id:
+          type: integer
+        member_id:
+          type: integer
+        rid:
+          type: string
+        status:
+          type: string
+        sum:
+          type: number
+        tid:
+          type: string
+        total:
+          type: number
+        txid:
+          type: string
+        updated_at:
+          type: string
+    entities.WebsocketMessage:
+      type: object
+      properties:
+        event:
+          type: string
+          enum:
+          - subscribe
+          - unsubscribe
+        streams:
+          type: array
+          items:
+            type: string
+    market.CreateOrderParams:
+      required:
+      - market
+      - side
+      type: object
+      properties:
+        amount:
+          type: number
+        market:
+          type: string
+        price:
+          type: number
+        side:
+          type: string
+          enum:
+          - buy
+          - sell
+        stop_price:
+          type: number
+        total:
+          type: number
+    market_entities.Order:
+      type: object
+      properties:
+        ask:
+          type: string
+        bid:
+          type: string
+        created_at:
+          type: string
+        filled_amount:
+          type: number
+        id:
+          type: integer
+        maker_fee:
+          type: number
+        market:
+          type: string
+        origin_amount:
+          type: number
+        price:
+          type: number
+        side:
+          type: string
+        state:
+          type: string
+        stop_price:
+          type: number
+        taker_fee:
+          type: number
+        trades_count:
+          type: integer
+        triggered_at:
+          type: string
+        type:
+          type: string
+        updated_at:
+          type: string
+    market_entities.Trade:
+      type: object
+      properties:
+        amount:
+          type: number
+        created_at:
+          type: string
+        fee:
+          type: number
+        fee_currency:
+          type: string
+        id:
+          type: integer
+        market:
+          type: string
+        order_id:
+          type: integer
+        order_side:
+          type: string
+        price:
+          type: number
+        side:
+          type: string
+        total:
+          type: number
+    models.AccountType:
+      type: string
+      enum:
+      - spot
+      - margin
+      x-enum-varnames:
+      - AccountTypeSpot
+      - AccountTypeMargin
+    models_datatypes.BlockchainCurrencyOptions:
+      type: object
+      additionalProperties: true
+    pkg.Error:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: string
+    pkg.StatusResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+    pkg_ticker.Ticker:
+      type: object
+      properties:
+        amount:
+          type: number
+        avg_price:
+          type: number
+        high:
+          type: number
+        last:
+          type: number
+        low:
+          type: number
+        open:
+          type: number
+        price_change_percent:
+          type: string
+        volume:
+          type: number
+    public.Depth:
+      type: object
+      properties:
+        asks:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+        bids:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+        sequence:
+          type: integer
+    public_entities.BlockchainCurrency:
+      type: object
+      properties:
+        blockchain_key:
+          type: string
+        client:
+          type: string
+        created_at:
+          type: string
+        currency_id:
+          type: string
+        deposit_enabled:
+          type: boolean
+        explorer_address:
+          type: string
+        explorer_transaction:
+          type: string
+        id:
+          type: integer
+        min_collection_amount:
+          type: number
+        min_confirmations:
+          type: integer
+        min_deposit_amount:
+          type: number
+        min_withdraw_amount:
+          type: number
+        options:
+          $ref: '#/components/schemas/models_datatypes.BlockchainCurrencyOptions'
+        parent_id:
+          type: string
+        protocol:
+          type: string
+        status:
+          type: string
+        subunits:
+          type: integer
+        updated_at:
+          type: string
+        withdraw_enabled:
+          type: boolean
+        withdraw_fee:
+          type: number
+    public_entities.Currency:
+      type: object
+      properties:
+        created_at:
+          type: string
+        default_network_id:
+          type: integer
+        description:
+          type: string
+        homepage:
+          type: string
+        icon_url:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        networks:
+          type: array
+          items:
+            $ref: '#/components/schemas/public_entities.BlockchainCurrency'
+        position:
+          type: integer
+        precision:
+          type: integer
+        price:
+          type: number
+        status:
+          type: string
+        updated_at:
+          type: string
+    public_entities.Market:
+      type: object
+      properties:
+        amount_precision:
+          type: integer
+        base_unit:
+          type: string
+        created_at:
+          type: string
+        id:
+          type: string
+        max_price:
+          type: number
+        min_amount:
+          type: number
+        min_price:
+          type: number
+        name:
+          type: string
+        position:
+          type: integer
+        price_precision:
+          type: integer
+        quote_unit:
+          type: string
+        state:
+          type: string
+        symbol:
+          type: string
+        total_precision:
+          type: integer
+        updated_at:
+          type: string
+    public_entities.Trade:
+      type: object
+      properties:
+        amount:
+          type: number
+        created_at:
+          type: string
+        id:
+          type: integer
+        market:
+          type: string
+        price:
+          type: number
+        side:
+          type: string
+        total:
+          type: number
+    public_entities.TradingFee:
+      type: object
+      properties:
+        group:
+          type: string
+        id:
+          type: integer
+        maker:
+          type: number
+        market_id:
+          type: string
+        taker:
+          type: number
+x-original-swagger-version: "2.0"

@@ -1,0 +1,526 @@
+openapi: 3.0.0
+info:
+  title: MEXC V2 spot
+  version: 1.0.0
+  description: ''
+servers:
+  - url: '{{api_url}}'
+  - url: '{{api_url}}open'
+  - url: '{{url}}'
+paths:
+  /open/api/v2/market/symbols:
+    get:
+      summary: symbols
+      tags:
+        - BaseInfo
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ApiKey
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: Request-Time
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: Signature
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: Recv-Window
+          in: header
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /open/api/v2/common/timestamp:
+    get:
+      summary: servertime
+      tags:
+        - BaseInfo
+      responses: {}
+  /api/v2/common/ping:
+    get:
+      summary: ping
+      tags:
+        - BaseInfo
+      responses: {}
+  /open/api/v2/market/api_default_symbols:
+    get:
+      summary: api_default_symbols
+      tags:
+        - BaseInfo
+      responses: {}
+  /open/api/v2/market/ticker:
+    get:
+      summary: Ticker
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /open/api/v2/market/depth:
+    get:
+      summary: Depth
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: depth
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /open/api/v2/market/deals:
+    get:
+      summary: Deals
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /open/api/v2/market/kline:
+    get:
+      summary: Kline
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: interval
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: start
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: end
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /open/api/v2/market/coin/list:
+    get:
+      summary: CoinList
+      tags:
+        - Market
+      parameters:
+        - name: currency
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /open/api/v2/account/info:
+    get:
+      summary: account
+      tags:
+        - AccountInfo
+      responses: {}
+  /open/api/v2/market/api_symbols:
+    get:
+      summary: ApiSymbols
+      tags:
+        - AccountInfo
+      responses: {}
+  /open/api/v2/asset/account/transfer:
+    post:
+      summary: accountTransfer
+      tags:
+        - AccountInfo
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sub_uid:
+                  type: string
+                  format: utc-millisec
+                currency:
+                  type: string
+                amount:
+                  type: string
+                  format: color
+                type:
+                  type: string
+  /open/api/v2/account/sub-account/list:
+    get:
+      summary: Subaccount
+      tags:
+        - AccountInfo
+      responses: {}
+  /open/api/v2/asset/account/transfer/record:
+    get:
+      summary: subaccountRecord
+      tags:
+        - AccountInfo
+      parameters:
+        - name: transact_id
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /open/api/v2/order/place:
+    post:
+      summary: PlaceOrder
+      tags:
+        - Trade
+      parameters:
+        - name: client_order_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                order_type:
+                  type: string
+                price:
+                  type: string
+                quantity:
+                  type: string
+                  format: utc-millisec
+                symbol:
+                  type: string
+                trade_type:
+                  type: string
+  /open/api/v2/order/cancel:
+    delete:
+      summary: CancelOrder
+      tags:
+        - Trade
+      parameters:
+        - name: order_ids
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+  /open/api/v2/order/place_batch:
+    post:
+      summary: MuiltPlaceOrder
+      tags:
+        - Trade
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  order_type:
+                    type: string
+                  price:
+                    type: string
+                    format: utc-millisec
+                  quantity:
+                    type: string
+                  symbol:
+                    type: string
+                  trade_type:
+                    type: string
+  /api/v2/order/open_orders:
+    get:
+      summary: GetOpenOrder
+      tags:
+        - Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /open/api/v2/order/list:
+    get:
+      summary: GetAllOrder
+      tags:
+        - Trade
+      parameters:
+        - name: states
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: trade_type
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /open/api/v2/order/query:
+    get:
+      summary: QueryOrderById
+      tags:
+        - Trade
+      parameters:
+        - name: order_ids
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /open/api/v2/order/deals:
+    get:
+      summary: GetOrderDeal
+      tags:
+        - Trade
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: start_time
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /open/api/v2/order/deal_detail:
+    get:
+      summary: QueryOrderDealById
+      tags:
+        - Trade
+      parameters:
+        - name: order_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /open/api/v2/order/cancel_by_symbol:
+    delete:
+      summary: CancelBySymbol
+      tags:
+        - Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /open/api/v2/asset/deposit/address/list:
+    get:
+      summary: GetDepositList
+      tags:
+        - Assets
+      parameters:
+        - name: currency
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /open/api/v2/asset/deposit/list:
+    get:
+      summary: GetDepositRecord
+      tags:
+        - Assets
+      parameters:
+        - name: currency
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: end_time
+          in: query
+          required: false
+          description: '"2022-01-29 16:41:04"'
+          schema:
+            type: integer
+        - name: start_time
+          in: query
+          required: false
+          description: '"2022-01-20 16:41:04"'
+          schema:
+            type: integer
+      responses: {}
+  /open/api/v2/asset/address/list:
+    get:
+      summary: GetAddressList
+      tags:
+        - Assets
+      parameters:
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /open/api/v2/asset/withdraw/list:
+    get:
+      summary: GetWithdrawList
+      tags:
+        - Assets
+      parameters:
+        - name: end_time
+          in: query
+          required: false
+          description: '2022-03-31 11:38:50'
+          schema:
+            type: integer
+        - name: start_time
+          in: query
+          required: false
+          description: '2022-03-29 11:38:50'
+          schema:
+            type: integer
+        - name: withdraw_id
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /open/api/v2/asset/withdraw:
+    post:
+      summary: withdraw
+      tags:
+        - Assets
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currency:
+                  type: string
+                chain:
+                  type: string
+                amount:
+                  type: string
+                address:
+                  type: string
+                  format: utc-millisec
+    delete:
+      summary: CancelWithdraw
+      tags:
+        - Assets
+      parameters:
+        - name: withdraw_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /open/api/v2/asset/internal/transfer:
+    post:
+      summary: transfer
+      tags:
+        - Assets
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currency:
+                  type: string
+                amount:
+                  type: string
+                  format: color
+                from:
+                  type: string
+                to:
+                  type: string
+  /open/api/v2/asset/internal/transfer/record:
+    get:
+      summary: GetTransferRecord
+      tags:
+        - Assets
+      parameters:
+        - name: end_time
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: start_time
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /open/api/v2/account/balance:
+    get:
+      summary: GetAvlTransfer
+      tags:
+        - Assets
+      parameters:
+        - name: currency
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /open/api/v2/asset/internal/transfer/info:
+    get:
+      summary: QueryTransferRecordById
+      tags:
+        - Assets
+      parameters:
+        - name: transact_id
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
