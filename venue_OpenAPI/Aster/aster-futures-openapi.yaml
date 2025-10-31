@@ -1,0 +1,917 @@
+openapi: 3.1.0
+info:
+  title: Aster Futures API
+  version: v3
+  description: Aster Futures REST API per aster-finance-futures-api-v3.md. Web3 ECDSA signing for TRADE/USER_DATA/USER_STREAM; MARKET_DATA is public.
+servers:
+  - url: https://fapi.asterdex.com
+tags:
+  - name: Market Data
+  - name: Accounts & Trades
+  - name: User Data Streams
+components:
+  securitySchemes:
+    AsterWeb3Sig:
+      type: apiKey
+      in: query
+      name: signature
+      description: Web3 signature of keccak256(ABIEncode([sorted params string, user, signer, nonce])) using API wallet private key.
+      x-aster-web3-signing: true
+  parameters:
+    User:
+      name: user
+      in: query
+      required: true
+      schema:
+        type: string
+        pattern: ^0x[a-fA-F0-9]{40}$
+      description: Main account wallet address
+    Signer:
+      name: signer
+      in: query
+      required: true
+      schema:
+        type: string
+        pattern: ^0x[a-fA-F0-9]{40}$
+      description: API wallet address
+    Nonce:
+      name: nonce
+      in: query
+      required: true
+      schema:
+        type: integer
+        format: int64
+      description: Current timestamp in microseconds
+    Timestamp:
+      name: timestamp
+      in: query
+      required: true
+      schema:
+        type: integer
+        format: int64
+      description: Millisecond timestamp when request is sent
+    RecvWindow:
+      name: recvWindow
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int64
+        default: 5000
+      description: Max ms after timestamp the request is valid
+    Symbol:
+      name: symbol
+      in: query
+      required: true
+      schema:
+        type: string
+    Pair:
+      name: pair
+      in: query
+      required: true
+      schema:
+        type: string
+    Limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+    StartTime:
+      name: startTime
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int64
+    EndTime:
+      name: endTime
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int64
+    OrderId:
+      name: orderId
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int64
+    OrigClientOrderId:
+      name: origClientOrderId
+      in: query
+      required: false
+      schema:
+        type: string
+  schemas:
+    ContractType:
+      type: string
+      enum: [PERPETUAL]
+    SymbolStatus:
+      type: string
+      enum: [PENDING_TRADING, TRADING, PRE_SETTLE, SETTLING, CLOSE]
+    OrderStatus:
+      type: string
+      enum: [NEW, PARTIALLY_FILLED, FILLED, CANCELED, REJECTED, EXPIRED]
+    OrderType:
+      type: string
+      enum: [LIMIT, MARKET, STOP, STOP_MARKET, TAKE_PROFIT, TAKE_PROFIT_MARKET, TRAILING_STOP_MARKET]
+    Side:
+      type: string
+      enum: [BUY, SELL]
+    PositionSide:
+      type: string
+      enum: [BOTH, LONG, SHORT]
+    TimeInForce:
+      type: string
+      enum: [GTC, IOC, FOK, GTX]
+    WorkingType:
+      type: string
+      enum: [MARK_PRICE, CONTRACT_PRICE]
+    KlineInterval:
+      type: string
+      enum: [1m,3m,5m,15m,30m,1h,2h,4h,6h,8h,12h,1d,3d,1w,1M]
+    ExchangeInfo:
+      type: object
+      properties:
+        timezone:
+          type: string
+        serverTime:
+          type: integer
+          format: int64
+        rateLimits:
+          type: array
+          items:
+            type: object
+        exchangeFilters:
+          type: array
+          items:
+            type: object
+        assets:
+          type: array
+          items:
+            type: object
+            properties:
+              asset:
+                type: string
+              marginAvailable:
+                type: boolean
+              autoAssetExchange:
+                nullable: true
+        symbols:
+          type: array
+          items:
+            type: object
+            properties:
+              symbol:
+                type: string
+              pair:
+                type: string
+              contractType:
+                $ref: '#/components/schemas/ContractType'
+              deliveryDate:
+                type: integer
+                format: int64
+              onboardDate:
+                type: integer
+                format: int64
+              status:
+                $ref: '#/components/schemas/SymbolStatus'
+              baseAsset:
+                type: string
+              quoteAsset:
+                type: string
+              marginAsset:
+                type: string
+              pricePrecision:
+                type: integer
+              quantityPrecision:
+                type: integer
+              baseAssetPrecision:
+                type: integer
+              quotePrecision:
+                type: integer
+              triggerProtect:
+                type: string
+              filters:
+                type: array
+                items:
+                  type: object
+              orderType:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderType'
+              timeInForce:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimeInForce'
+    Depth:
+      type: object
+      properties:
+        lastUpdateId:
+          type: integer
+        E:
+          type: integer
+        T:
+          type: integer
+        bids:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+        asks:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+    Trade:
+      type: object
+      properties:
+        id:
+          type: integer
+        price:
+          type: string
+        qty:
+          type: string
+        quoteQty:
+          type: string
+        time:
+          type: integer
+        isBuyerMaker:
+          type: boolean
+    AggTrade:
+      type: object
+      properties:
+        a:
+          type: integer
+        p:
+          type: string
+        q:
+          type: string
+        f:
+          type: integer
+        l:
+          type: integer
+        T:
+          type: integer
+        m:
+          type: boolean
+    KlineArray:
+      type: array
+      items:
+        type: array
+        items:
+          oneOf:
+            - type: integer
+            - type: string
+    MarkPrice:
+      type: object
+      properties:
+        symbol:
+          type: string
+        markPrice:
+          type: string
+        indexPrice:
+          type: string
+        estimatedSettlePrice:
+          type: string
+        lastFundingRate:
+          type: string
+        nextFundingTime:
+          type: integer
+        interestRate:
+          type: string
+        time:
+          type: integer
+    NewOrderRequest:
+      type: object
+      properties:
+        symbol:
+          type: string
+        side:
+          $ref: '#/components/schemas/Side'
+        positionSide:
+          $ref: '#/components/schemas/PositionSide'
+        type:
+          $ref: '#/components/schemas/OrderType'
+        timeInForce:
+          $ref: '#/components/schemas/TimeInForce'
+        quantity:
+          type: string
+        reduceOnly:
+          type: boolean
+        price:
+          type: string
+        newClientOrderId:
+          type: string
+        stopPrice:
+          type: string
+        closePosition:
+          type: boolean
+        activationPrice:
+          type: string
+        callbackRate:
+          type: string
+        workingType:
+          $ref: '#/components/schemas/WorkingType'
+        priceProtect:
+          type: boolean
+        timestamp:
+          type: integer
+      required: [symbol, side, type, timestamp]
+    OrderResponse:
+      type: object
+      properties:
+        clientOrderId:
+          type: string
+        cumQty:
+          type: string
+        cumQuote:
+          type: string
+        executedQty:
+          type: string
+        orderId:
+          type: integer
+        avgPrice:
+          type: string
+        origQty:
+          type: string
+        price:
+          type: string
+        reduceOnly:
+          type: boolean
+        side:
+          $ref: '#/components/schemas/Side'
+        positionSide:
+          $ref: '#/components/schemas/PositionSide'
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        stopPrice:
+          type: string
+        closePosition:
+          type: boolean
+        symbol:
+          type: string
+        timeInForce:
+          $ref: '#/components/schemas/TimeInForce'
+        type:
+          $ref: '#/components/schemas/OrderType'
+        origType:
+          $ref: '#/components/schemas/OrderType'
+        activatePrice:
+          type: string
+        priceRate:
+          type: string
+        updateTime:
+          type: integer
+        workingType:
+          $ref: '#/components/schemas/WorkingType'
+        priceProtect:
+          type: boolean
+paths:
+  /fapi/v3/ping:
+    get:
+      tags: [Market Data]
+      security: []
+      responses:
+        '200':
+          description: OK
+  /fapi/v3/time:
+    get:
+      tags: [Market Data]
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  serverTime:
+                    type: integer
+  /fapi/v3/exchangeInfo:
+    get:
+      tags: [Market Data]
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExchangeInfo'
+  /fapi/v3/depth:
+    get:
+      tags: [Market Data]
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Symbol'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Depth'
+  /fapi/v3/trades:
+    get:
+      tags: [Market Data]
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Symbol'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trade'
+  /fapi/v3/historicalTrades:
+    get:
+      tags: [Market Data]
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Symbol'
+        - $ref: '#/components/parameters/Limit'
+        - name: fromId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trade'
+  /fapi/v3/aggTrades:
+    get:
+      tags: [Market Data]
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Symbol'
+        - name: fromId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - $ref: '#/components/parameters/StartTime'
+        - $ref: '#/components/parameters/EndTime'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AggTrade'
+  /fapi/v3/klines:
+    get:
+      tags: [Market Data]
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Symbol'
+        - name: interval
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/KlineInterval'
+        - $ref: '#/components/parameters/StartTime'
+        - $ref: '#/components/parameters/EndTime'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KlineArray'
+  /fapi/v3/markPriceKlines:
+    get:
+      tags: [Market Data]
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Symbol'
+        - name: interval
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/KlineInterval'
+        - $ref: '#/components/parameters/StartTime'
+        - $ref: '#/components/parameters/EndTime'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KlineArray'
+  /fapi/v3/premiumIndex:
+    get:
+      tags: [Market Data]
+      security: []
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/MarkPrice'
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/MarkPrice'
+  /fapi/v3/fundingRate:
+    get:
+      tags: [Market Data]
+      security: []
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - $ref: '#/components/parameters/StartTime'
+        - $ref: '#/components/parameters/EndTime'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    symbol:
+                      type: string
+                    fundingRate:
+                      type: string
+                    fundingTime:
+                      type: integer
+  /fapi/v3/ticker/24hr:
+    get:
+      tags: [Market Data]
+      security: []
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                  - type: array
+                    items:
+                      type: object
+  /fapi/v3/ticker/price:
+    get:
+      tags: [Market Data]
+      security: []
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                  - type: array
+                    items:
+                      type: object
+  /fapi/v3/ticker/bookTicker:
+    get:
+      tags: [Market Data]
+      security: []
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                  - type: array
+                    items:
+                      type: object
+  /fapi/v3/order:
+    post:
+      tags: [Accounts & Trades]
+      security:
+        - AsterWeb3Sig: []
+      parameters:
+        - $ref: '#/components/parameters/User'
+        - $ref: '#/components/parameters/Signer'
+        - $ref: '#/components/parameters/Nonce'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NewOrderRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+    get:
+      tags: [Accounts & Trades]
+      security:
+        - AsterWeb3Sig: []
+      parameters:
+        - $ref: '#/components/parameters/User'
+        - $ref: '#/components/parameters/Signer'
+        - $ref: '#/components/parameters/Nonce'
+        - $ref: '#/components/parameters/Symbol'
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/OrigClientOrderId'
+        - $ref: '#/components/parameters/RecvWindow'
+        - $ref: '#/components/parameters/Timestamp'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+    delete:
+      tags: [Accounts & Trades]
+      security:
+        - AsterWeb3Sig: []
+      parameters:
+        - $ref: '#/components/parameters/User'
+        - $ref: '#/components/parameters/Signer'
+        - $ref: '#/components/parameters/Nonce'
+        - $ref: '#/components/parameters/Symbol'
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/OrigClientOrderId'
+        - $ref: '#/components/parameters/RecvWindow'
+        - $ref: '#/components/parameters/Timestamp'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+  /fapi/v3/batchOrders:
+    post:
+      tags: [Accounts & Trades]
+      security:
+        - AsterWeb3Sig: []
+      parameters:
+        - $ref: '#/components/parameters/User'
+        - $ref: '#/components/parameters/Signer'
+        - $ref: '#/components/parameters/Nonce'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                batchOrders:
+                  type: array
+                  maxItems: 5
+                  items:
+                    $ref: '#/components/schemas/NewOrderRequest'
+                timestamp:
+                  type: integer
+              required: [batchOrders, timestamp]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/OrderResponse'
+                    - type: object
+                      properties:
+                        code:
+                          type: integer
+                        msg:
+                          type: string
+    delete:
+      tags: [Accounts & Trades]
+      security:
+        - AsterWeb3Sig: []
+      parameters:
+        - $ref: '#/components/parameters/User'
+        - $ref: '#/components/parameters/Signer'
+        - $ref: '#/components/parameters/Nonce'
+        - $ref: '#/components/parameters/Symbol'
+        - name: orderIdList
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+          style: form
+          explode: false
+        - name: origClientOrderIdList
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+        - $ref: '#/components/parameters/RecvWindow'
+        - $ref: '#/components/parameters/Timestamp'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/OrderResponse'
+                    - type: object
+                      properties:
+                        code:
+                          type: integer
+                        msg:
+                          type: string
+  /fapi/v3/allOpenOrders:
+    delete:
+      tags: [Accounts & Trades]
+      security:
+        - AsterWeb3Sig: []
+      parameters:
+        - $ref: '#/components/parameters/User'
+        - $ref: '#/components/parameters/Signer'
+        - $ref: '#/components/parameters/Nonce'
+        - $ref: '#/components/parameters/Symbol'
+        - $ref: '#/components/parameters/RecvWindow'
+        - $ref: '#/components/parameters/Timestamp'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  msg:
+                    type: string
+  /fapi/v3/openOrder:
+    get:
+      tags: [Accounts & Trades]
+      security:
+        - AsterWeb3Sig: []
+      parameters:
+        - $ref: '#/components/parameters/User'
+        - $ref: '#/components/parameters/Signer'
+        - $ref: '#/components/parameters/Nonce'
+        - $ref: '#/components/parameters/Symbol'
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/OrigClientOrderId'
+        - $ref: '#/components/parameters/RecvWindow'
+        - $ref: '#/components/parameters/Timestamp'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+  /fapi/v3/openOrders:
+    get:
+      tags: [Accounts & Trades]
+      security:
+        - AsterWeb3Sig: []
+      parameters:
+        - $ref: '#/components/parameters/User'
+        - $ref: '#/components/parameters/Signer'
+        - $ref: '#/components/parameters/Nonce'
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - $ref: '#/components/parameters/RecvWindow'
+        - $ref: '#/components/parameters/Timestamp'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderResponse'
+  /fapi/v3/allOrders:
+    get:
+      tags: [Accounts & Trades]
+      security:
+        - AsterWeb3Sig: []
+      parameters:
+        - $ref: '#/components/parameters/User'
+        - $ref: '#/components/parameters/Signer'
+        - $ref: '#/components/parameters/Nonce'
+        - $ref: '#/components/parameters/Symbol'
+        - $ref: '#/components/parameters/OrderId'
+        - $ref: '#/components/parameters/StartTime'
+        - $ref: '#/components/parameters/EndTime'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/RecvWindow'
+        - $ref: '#/components/parameters/Timestamp'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderResponse'
+  /fapi/v3/balance:
+    get:
+      tags: [Accounts & Trades]
+      security:
+        - AsterWeb3Sig: []
+      parameters:
+        - $ref: '#/components/parameters/User'
+        - $ref: '#/components/parameters/Signer'
+        - $ref: '#/components/parameters/Nonce'
+        - $ref: '#/components/parameters/RecvWindow'
+        - $ref: '#/components/parameters/Timestamp'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+  /fapi/v3/account:
+    get:
+      tags: [Accounts & Trades]
+      security:
+        - AsterWeb3Sig: []
+      parameters:
+        - $ref: '#/components/parameters/User'
+        - $ref: '#/components/parameters/Signer'
+        - $ref: '#/components/parameters/Nonce'
+        - $ref: '#/components/parameters/RecvWindow'
+        - $ref: '#/components/parameters/Timestamp'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object

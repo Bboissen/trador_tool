@@ -1,0 +1,878 @@
+asyncapi: '2.6.0'
+info:
+  title: Aster WebSocket Streams
+  version: '1.0.0'
+  description: WebSocket market and user data streams for Aster Spot and Futures as documented in aster-finance-futures-api-v3.md and aster-finance-spot-api.md.
+defaultContentType: application/json
+servers:
+  futuresRaw:
+    url: wss://fstream.asterdex.com/ws
+    protocol: wss
+    description: Futures raw stream (single stream per connection)
+  futuresCombined:
+    url: wss://fstream.asterdex.com/stream
+    protocol: wss
+    description: Futures combined streams (?streams=...)
+  spotRaw:
+    url: wss://sstream.asterdex.com/ws
+    protocol: wss
+    description: Spot raw stream (single stream per connection)
+  spotCombined:
+    url: wss://sstream.asterdex.com/stream
+    protocol: wss
+    description: Spot combined streams (?streams=...)
+channels:
+  control:
+    description: Control channel for sending SUBSCRIBE/UNSUBSCRIBE/LIST_SUBSCRIPTIONS/SET_PROPERTY/GET_PROPERTY and receiving ack responses.
+    servers: [futuresRaw, futuresCombined, spotRaw, spotCombined]
+    publish:
+      summary: Client -> Server control messages
+      message:
+        oneOf:
+          - $ref: '#/components/messages/Subscribe'
+          - $ref: '#/components/messages/Unsubscribe'
+          - $ref: '#/components/messages/ListSubscriptions'
+          - $ref: '#/components/messages/SetProperty'
+          - $ref: '#/components/messages/GetProperty'
+    subscribe:
+      summary: Server -> Client responses to control messages
+      message:
+        oneOf:
+          - $ref: '#/components/messages/ControlAck'
+          - $ref: '#/components/messages/ControlError'
+  '{symbol}@aggTrade':
+    description: Aggregate trade stream for one symbol
+    parameters:
+      symbol:
+        description: Lowercase trading symbol, e.g. btcusdt
+        schema:
+          type: string
+    servers: [futuresRaw, spotRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/AggTrade'
+  '{symbol}@markPrice':
+    description: Mark price and funding rate stream (3s)
+    parameters:
+      symbol:
+        schema:
+          type: string
+    servers: [futuresRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/MarkPrice'
+  '{symbol}@markPrice@1s':
+    description: Mark price and funding rate stream (1s)
+    parameters:
+      symbol:
+        schema:
+          type: string
+    servers: [futuresRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/MarkPrice'
+  '!markPrice@arr':
+    description: All market mark price and funding rate (3s)
+    servers: [futuresRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/MarkPriceArray'
+  '!markPrice@arr@1s':
+    description: All market mark price and funding rate (1s)
+    servers: [futuresRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/MarkPriceArray'
+  '{symbol}@kline_{interval}':
+    description: Kline/Candlestick stream for a symbol and interval
+    parameters:
+      symbol:
+        schema:
+          type: string
+      interval:
+        schema:
+          $ref: '#/components/schemas/KlineInterval'
+    servers: [futuresRaw, spotRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/Kline'
+  '{symbol}@miniTicker':
+    description: 24hr mini ticker for one symbol
+    parameters:
+      symbol:
+        schema:
+          type: string
+    servers: [futuresRaw, spotRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/MiniTicker'
+  '!miniTicker@arr':
+    description: 24hr mini ticker for all symbols
+    servers: [futuresRaw, spotRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/MiniTickerArray'
+  '{symbol}@ticker':
+    description: 24hr full ticker statistics for one symbol
+    parameters:
+      symbol:
+        schema:
+          type: string
+    servers: [futuresRaw, spotRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/Ticker'
+  '!ticker@arr':
+    description: 24hr full ticker for all symbols
+    servers: [futuresRaw, spotRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/TickerArray'
+  '{symbol}@bookTicker':
+    description: Best bid/ask updates for one symbol
+    parameters:
+      symbol:
+        schema:
+          type: string
+    servers: [futuresRaw, spotRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/BookTicker'
+  '!bookTicker':
+    description: Best bid/ask updates for all symbols
+    servers: [futuresRaw, spotRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/BookTicker'
+  '{symbol}@forceOrder':
+    description: Liquidation/ADL order snapshot for a symbol
+    parameters:
+      symbol:
+        schema:
+          type: string
+    servers: [futuresRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/ForceOrder'
+  '!forceOrder@arr':
+    description: Liquidation/ADL order snapshot for all symbols
+    servers: [futuresRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/ForceOrder'
+  '{symbol}@depth':
+    description: Diff. Book Depth stream (250/500/100ms)
+    parameters:
+      symbol:
+        schema:
+          type: string
+    servers: [futuresRaw, spotRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/DepthUpdate'
+  '{symbol}@depth@500ms':
+    description: Diff. Book Depth stream (500ms)
+    parameters:
+      symbol:
+        schema:
+          type: string
+    servers: [futuresRaw, spotRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/DepthUpdate'
+  '{symbol}@depth@100ms':
+    description: Diff. Book Depth stream (100ms)
+    parameters:
+      symbol:
+        schema:
+          type: string
+    servers: [futuresRaw, spotRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/DepthUpdate'
+  '{symbol}@depth{levels}':
+    description: Partial Book Depth stream (levels=5|10|20)
+    parameters:
+      symbol:
+        schema:
+          type: string
+      levels:
+        schema:
+          type: integer
+          enum: [5,10,20]
+    servers: [futuresRaw, spotRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/PartialDepthUpdate'
+  '{symbol}@depth{levels}@500ms':
+    description: Partial Book Depth stream (500ms)
+    parameters:
+      symbol:
+        schema:
+          type: string
+      levels:
+        schema:
+          type: integer
+          enum: [5,10,20]
+    servers: [futuresRaw, spotRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/PartialDepthUpdate'
+  '{symbol}@depth{levels}@100ms':
+    description: Partial Book Depth stream (100ms)
+    parameters:
+      symbol:
+        schema:
+          type: string
+      levels:
+        schema:
+          type: integer
+          enum: [5,10,20]
+    servers: [futuresRaw, spotRaw]
+    subscribe:
+      message:
+        $ref: '#/components/messages/PartialDepthUpdate'
+  '/ws/{listenKey}':
+    description: User data stream (Spot or Futures) with listenKey
+    parameters:
+      listenKey:
+        description: Listen key obtained via REST listenKey endpoint
+        schema:
+          type: string
+    servers: [futuresRaw, spotRaw]
+    subscribe:
+      message:
+        oneOf:
+          - $ref: '#/components/messages/ListenKeyExpired'
+          - $ref: '#/components/messages/MarginCall'
+          - $ref: '#/components/messages/AccountUpdate'
+          - $ref: '#/components/messages/OrderTradeUpdate'
+          - $ref: '#/components/messages/AccountConfigUpdate'
+components:
+  messages:
+    Subscribe:
+      name: SUBSCRIBE
+      payload:
+        type: object
+        required: [method, params, id]
+        properties:
+          method:
+            type: string
+            enum: [SUBSCRIBE]
+          params:
+            type: array
+            items:
+              type: string
+          id:
+            type: integer
+    Unsubscribe:
+      name: UNSUBSCRIBE
+      payload:
+        type: object
+        required: [method, params, id]
+        properties:
+          method:
+            type: string
+            enum: [UNSUBSCRIBE]
+          params:
+            type: array
+            items:
+              type: string
+          id:
+            type: integer
+    ListSubscriptions:
+      name: LIST_SUBSCRIPTIONS
+      payload:
+        type: object
+        required: [method, id]
+        properties:
+          method:
+            type: string
+            enum: [LIST_SUBSCRIPTIONS]
+          id:
+            type: integer
+    SetProperty:
+      name: SET_PROPERTY
+      payload:
+        type: object
+        required: [method, params, id]
+        properties:
+          method:
+            type: string
+            enum: [SET_PROPERTY]
+          params:
+            type: array
+            minItems: 2
+            maxItems: 2
+            items:
+              oneOf:
+                - type: string
+                - type: boolean
+          id:
+            type: integer
+    GetProperty:
+      name: GET_PROPERTY
+      payload:
+        type: object
+        required: [method, params, id]
+        properties:
+          method:
+            type: string
+            enum: [GET_PROPERTY]
+          params:
+            type: array
+            minItems: 1
+            maxItems: 1
+            items:
+              type: string
+          id:
+            type: integer
+    ControlAck:
+      name: ControlAck
+      payload:
+        type: object
+        properties:
+          result:
+            nullable: true
+          id:
+            type: integer
+    ControlError:
+      name: ControlError
+      payload:
+        type: object
+        properties:
+          code:
+            type: integer
+          msg:
+            type: string
+          id:
+            type: integer
+    AggTrade:
+      name: AggregateTrade
+      payload:
+        $ref: '#/components/schemas/AggTradeEvent'
+    MarkPrice:
+      name: MarkPrice
+      payload:
+        $ref: '#/components/schemas/MarkPriceEvent'
+    MarkPriceArray:
+      name: MarkPriceArray
+      payload:
+        type: array
+        items:
+          $ref: '#/components/schemas/MarkPriceEvent'
+    Kline:
+      name: Kline
+      payload:
+        $ref: '#/components/schemas/KlineEvent'
+    MiniTicker:
+      name: MiniTicker
+      payload:
+        $ref: '#/components/schemas/MiniTickerEvent'
+    MiniTickerArray:
+      name: MiniTickerArray
+      payload:
+        type: array
+        items:
+          $ref: '#/components/schemas/MiniTickerEvent'
+    Ticker:
+      name: Ticker
+      payload:
+        $ref: '#/components/schemas/TickerEvent'
+    TickerArray:
+      name: TickerArray
+      payload:
+        type: array
+        items:
+          $ref: '#/components/schemas/TickerEvent'
+    BookTicker:
+      name: BookTicker
+      payload:
+        $ref: '#/components/schemas/BookTickerEvent'
+    ForceOrder:
+      name: ForceOrder
+      payload:
+        $ref: '#/components/schemas/ForceOrderEvent'
+    DepthUpdate:
+      name: DepthUpdate
+      payload:
+        $ref: '#/components/schemas/DepthUpdateEvent'
+    PartialDepthUpdate:
+      name: PartialDepthUpdate
+      payload:
+        $ref: '#/components/schemas/PartialDepthUpdateEvent'
+    ListenKeyExpired:
+      name: ListenKeyExpired
+      payload:
+        type: object
+        properties:
+          e:
+            type: string
+            enum: [listenKeyExpired]
+          E:
+            type: integer
+    MarginCall:
+      name: MarginCall
+      payload:
+        $ref: '#/components/schemas/MarginCallEvent'
+    AccountUpdate:
+      name: AccountUpdate
+      payload:
+        $ref: '#/components/schemas/AccountUpdateEvent'
+    OrderTradeUpdate:
+      name: OrderTradeUpdate
+      payload:
+        $ref: '#/components/schemas/OrderTradeUpdateEvent'
+    AccountConfigUpdate:
+      name: AccountConfigUpdate
+      payload:
+        $ref: '#/components/schemas/AccountConfigUpdateEvent'
+  schemas:
+    KlineInterval:
+      type: string
+      enum: [1m,3m,5m,15m,30m,1h,2h,4h,6h,8h,12h,1d,3d,1w,1M]
+    AggTradeEvent:
+      type: object
+      properties:
+        e:
+          type: string
+          enum: [aggTrade]
+        E:
+          type: integer
+        s:
+          type: string
+        a:
+          type: integer
+        p:
+          type: string
+        q:
+          type: string
+        f:
+          type: integer
+        l:
+          type: integer
+        T:
+          type: integer
+        m:
+          type: boolean
+    MarkPriceEvent:
+      type: object
+      properties:
+        e:
+          type: string
+          enum: [markPriceUpdate]
+        E:
+          type: integer
+        s:
+          type: string
+        p:
+          type: string
+        i:
+          type: string
+        P:
+          type: string
+        r:
+          type: string
+        T:
+          type: integer
+    KlineEvent:
+      type: object
+      properties:
+        e:
+          type: string
+          enum: [kline]
+        E:
+          type: integer
+        s:
+          type: string
+        k:
+          type: object
+          properties:
+            t:
+              type: integer
+            T:
+              type: integer
+            s:
+              type: string
+            i:
+              $ref: '#/components/schemas/KlineInterval'
+            f:
+              type: integer
+            L:
+              type: integer
+            o:
+              type: string
+            c:
+              type: string
+            h:
+              type: string
+            l:
+              type: string
+            v:
+              type: string
+            n:
+              type: integer
+            x:
+              type: boolean
+            q:
+              type: string
+            V:
+              type: string
+            Q:
+              type: string
+            B:
+              type: string
+    MiniTickerEvent:
+      type: object
+      properties:
+        e:
+          type: string
+          enum: [24hrMiniTicker]
+        E:
+          type: integer
+        s:
+          type: string
+        c:
+          type: string
+        o:
+          type: string
+        h:
+          type: string
+        l:
+          type: string
+        v:
+          type: string
+        q:
+          type: string
+    TickerEvent:
+      type: object
+      properties:
+        e:
+          type: string
+          enum: [24hrTicker]
+        E:
+          type: integer
+        s:
+          type: string
+        p:
+          type: string
+        P:
+          type: string
+        w:
+          type: string
+        c:
+          type: string
+        Q:
+          type: string
+        o:
+          type: string
+        h:
+          type: string
+        l:
+          type: string
+        v:
+          type: string
+        q:
+          type: string
+        O:
+          type: integer
+        C:
+          type: integer
+        F:
+          type: integer
+        L:
+          type: integer
+        n:
+          type: integer
+    BookTickerEvent:
+      type: object
+      properties:
+        e:
+          type: string
+          enum: [bookTicker]
+        u:
+          type: integer
+        E:
+          type: integer
+        T:
+          type: integer
+        s:
+          type: string
+        b:
+          type: string
+        B:
+          type: string
+        a:
+          type: string
+        A:
+          type: string
+    ForceOrderEvent:
+      type: object
+      properties:
+        e:
+          type: string
+          enum: [forceOrder]
+        E:
+          type: integer
+        o:
+          type: object
+          properties:
+            s:
+              type: string
+            S:
+              type: string
+            o:
+              type: string
+            f:
+              type: string
+            q:
+              type: string
+            p:
+              type: string
+            ap:
+              type: string
+            X:
+              type: string
+            l:
+              type: string
+            z:
+              type: string
+            T:
+              type: integer
+    DepthUpdateEvent:
+      type: object
+      properties:
+        e:
+          type: string
+          enum: [depthUpdate]
+        E:
+          type: integer
+        T:
+          type: integer
+        s:
+          type: string
+        U:
+          type: integer
+        u:
+          type: integer
+        pu:
+          type: integer
+        b:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+        a:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+    PartialDepthUpdateEvent:
+      type: object
+      properties:
+        e:
+          type: string
+          enum: [depthUpdate]
+        E:
+          type: integer
+        T:
+          type: integer
+        s:
+          type: string
+        U:
+          type: integer
+        u:
+          type: integer
+        pu:
+          type: integer
+        b:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+        a:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+    MarginCallEvent:
+      type: object
+      properties:
+        e:
+          type: string
+          enum: [MARGIN_CALL]
+        E:
+          type: integer
+        cw:
+          type: string
+        p:
+          type: array
+          items:
+            type: object
+            properties:
+              s:
+                type: string
+              ps:
+                type: string
+              pa:
+                type: string
+              mt:
+                type: string
+              iw:
+                type: string
+              mp:
+                type: string
+              up:
+                type: string
+              mm:
+                type: string
+    AccountUpdateEvent:
+      type: object
+      properties:
+        e:
+          type: string
+          enum: [ACCOUNT_UPDATE]
+        E:
+          type: integer
+        T:
+          type: integer
+        a:
+          type: object
+          properties:
+            m:
+              type: string
+            B:
+              type: array
+              items:
+                type: object
+                properties:
+                  a:
+                    type: string
+                  wb:
+                    type: string
+                  cw:
+                    type: string
+                  bc:
+                    type: string
+            P:
+              type: array
+              items:
+                type: object
+                properties:
+                  s:
+                    type: string
+                  pa:
+                    type: string
+                  ep:
+                    type: string
+                  cr:
+                    type: string
+                  up:
+                    type: string
+                  mt:
+                    type: string
+                  iw:
+                    type: string
+                  ps:
+                    type: string
+    OrderTradeUpdateEvent:
+      type: object
+      properties:
+        e:
+          type: string
+          enum: [ORDER_TRADE_UPDATE]
+        E:
+          type: integer
+        T:
+          type: integer
+        o:
+          type: object
+          properties:
+            s:
+              type: string
+            c:
+              type: string
+            S:
+              type: string
+            o:
+              type: string
+            f:
+              type: string
+            q:
+              type: string
+            p:
+              type: string
+            ap:
+              type: string
+            sp:
+              type: string
+            x:
+              type: string
+            X:
+              type: string
+            i:
+              type: integer
+            l:
+              type: string
+            z:
+              type: string
+            L:
+              type: string
+            N:
+              type: string
+            n:
+              type: string
+            t:
+              type: integer
+            b:
+              type: string
+            a:
+              type: string
+            m:
+              type: boolean
+            R:
+              type: boolean
+            wt:
+              type: string
+            ot:
+              type: string
+            ps:
+              type: string
+            cp:
+              type: boolean
+            AP:
+              type: string
+            cr:
+              type: string
+            rp:
+              type: string
+    AccountConfigUpdateEvent:
+      type: object
+      properties:
+        e:
+          type: string
+          enum: [ACCOUNT_CONFIG_UPDATE]
+        E:
+          type: integer
+        T:
+          type: integer
+        ac:
+          type: object
+          properties:
+            s:
+              type: string
+            l:
+              type: integer
+        ai:
+          type: object
+          properties:
+            j:
+              type: boolean
+            f:
+              type: boolean
+            d:
+              type: boolean

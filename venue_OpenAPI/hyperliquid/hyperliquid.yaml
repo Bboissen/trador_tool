@@ -1,0 +1,724 @@
+openapi: 3.1.0
+info:
+  title: Hyperliquid Exchange API
+  version: v1
+  description: |
+    Single multiplexed exchange endpoint. All requests are sent to POST /exchange with an envelope containing an action variant, nonce, and signature.
+servers:
+  - url: https://api.hyperliquid.xyz
+paths:
+  /exchange:
+    post:
+      summary: Exchange action
+      description: Submit one of many actions via a single multiplexed endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExchangeRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExchangeResponse'
+components:
+  schemas:
+    ExchangeRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        action:
+          $ref: '#/components/schemas/Action'
+        nonce:
+          type: number
+          description: Recommended to use the current timestamp in milliseconds
+        signature:
+          $ref: '#/components/schemas/SignatureObject'
+        vaultAddress:
+          $ref: '#/components/schemas/HexAddress'
+        expiresAfter:
+          type: number
+          description: Timestamp in milliseconds
+      required:
+        - action
+        - nonce
+        - signature
+    ExchangeResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Typically "ok"
+        response:
+          type: object
+          properties:
+            type:
+              type: string
+              description: Mirrors the action.type
+            data:
+              description: Action-specific payload
+          additionalProperties: true
+      additionalProperties: false
+    SignatureObject:
+      type: object
+      description: Opaque signature object; structure may vary per action
+      additionalProperties: true
+    HexAddress:
+      type: string
+      description: 42-character hexadecimal address starting with 0x
+      pattern: ^0x[a-fA-F0-9]{40}$
+    SignatureChainId:
+      type: string
+      description: Chain ID used when signing in hexadecimal format; e.g. "0xa4b1" for Arbitrum
+      pattern: ^0x[a-fA-F0-9]+$
+    HyperliquidChain:
+      type: string
+      enum: [Mainnet, Testnet]
+    AssetId:
+      type: integer
+      minimum: 0
+      description: Asset index (perps universe index or 10000 + spot index)
+    Tif:
+      type: string
+      enum: [Alo, Ioc, Gtc]
+    Tpsl:
+      type: string
+      enum: [tp, sl]
+    OrderGrouping:
+      type: string
+      enum: [na, normalTpsl, positionTpsl]
+    BuilderFee:
+      type: object
+      additionalProperties: false
+      properties:
+        b:
+          $ref: '#/components/schemas/HexAddress'
+        f:
+          type: integer
+          description: Fee in tenths of a basis point
+      required: [b, f]
+    OrderExecType:
+      oneOf:
+        - type: object
+          additionalProperties: false
+          properties:
+            limit:
+              type: object
+              additionalProperties: false
+              properties:
+                tif:
+                  $ref: '#/components/schemas/Tif'
+              required: [tif]
+          required: [limit]
+        - type: object
+          additionalProperties: false
+          properties:
+            trigger:
+              type: object
+              additionalProperties: false
+              properties:
+                isMarket:
+                  type: boolean
+                triggerPx:
+                  type: string
+                tpsl:
+                  $ref: '#/components/schemas/Tpsl'
+              required: [isMarket, triggerPx, tpsl]
+          required: [trigger]
+    OrderEntry:
+      type: object
+      additionalProperties: false
+      properties:
+        a:
+          $ref: '#/components/schemas/AssetId'
+        b:
+          type: boolean
+          description: isBuy
+        p:
+          type: string
+          description: price
+        s:
+          type: string
+          description: size
+        r:
+          type: boolean
+          description: reduceOnly
+        t:
+          $ref: '#/components/schemas/OrderExecType'
+        c:
+          type: string
+          description: Optional client order id (128-bit hex string)
+      required: [a, b, p, s, r, t]
+    ModifyTarget:
+      allOf:
+        - type: object
+          properties:
+            oid:
+              type: integer
+          required: []
+        - type: object
+          properties:
+            cloid:
+              type: string
+          required: []
+      oneOf:
+        - required: [oid]
+        - required: [cloid]
+    ModifyItem:
+      allOf:
+        - $ref: '#/components/schemas/ModifyTarget'
+        - type: object
+          properties:
+            order:
+              $ref: '#/components/schemas/OrderEntry'
+          required: [order]
+          additionalProperties: false
+    Action:
+      oneOf:
+        - $ref: '#/components/schemas/ActOrder'
+        - $ref: '#/components/schemas/ActCancel'
+        - $ref: '#/components/schemas/ActCancelByCloid'
+        - $ref: '#/components/schemas/ActScheduleCancel'
+        - $ref: '#/components/schemas/ActModify'
+        - $ref: '#/components/schemas/ActBatchModify'
+        - $ref: '#/components/schemas/ActUpdateLeverage'
+        - $ref: '#/components/schemas/ActUpdateIsolatedMargin'
+        - $ref: '#/components/schemas/ActTopUpIsolatedOnlyMargin'
+        - $ref: '#/components/schemas/ActUsdSend'
+        - $ref: '#/components/schemas/ActSpotSend'
+        - $ref: '#/components/schemas/ActWithdraw3'
+        - $ref: '#/components/schemas/ActUsdClassTransfer'
+        - $ref: '#/components/schemas/ActSendAsset'
+        - $ref: '#/components/schemas/ActCDeposit'
+        - $ref: '#/components/schemas/ActCWithdraw'
+        - $ref: '#/components/schemas/ActTokenDelegate'
+        - $ref: '#/components/schemas/ActVaultTransfer'
+        - $ref: '#/components/schemas/ActApproveAgent'
+        - $ref: '#/components/schemas/ActApproveBuilderFee'
+        - $ref: '#/components/schemas/ActTwapOrder'
+        - $ref: '#/components/schemas/ActTwapCancel'
+        - $ref: '#/components/schemas/ActReserveRequestWeight'
+        - $ref: '#/components/schemas/ActNoop'
+        - $ref: '#/components/schemas/ActUserEnableDexAbstraction'
+        - $ref: '#/components/schemas/ActAgentEnableDexAbstraction'
+    ActOrder:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: order
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderEntry'
+          minItems: 1
+        grouping:
+          $ref: '#/components/schemas/OrderGrouping'
+        builder:
+          $ref: '#/components/schemas/BuilderFee'
+      required: [type, orders, grouping]
+    ActCancel:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: cancel
+        cancels:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              a:
+                $ref: '#/components/schemas/AssetId'
+              o:
+                type: integer
+            required: [a, o]
+      required: [type, cancels]
+    ActCancelByCloid:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: cancelByCloid
+        cancels:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            properties:
+              asset:
+                $ref: '#/components/schemas/AssetId'
+              cloid:
+                type: string
+            required: [asset, cloid]
+      required: [type, cancels]
+    ActScheduleCancel:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: scheduleCancel
+        time:
+          type: number
+          description: Optional future time in ms to schedule a cancel-all
+      required: [type]
+    ActModify:
+      allOf:
+        - type: object
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+              const: modify
+            order:
+              $ref: '#/components/schemas/OrderEntry'
+          required: [type, order]
+        - $ref: '#/components/schemas/ModifyTarget'
+    ActBatchModify:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: batchModify
+        modifies:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/ModifyItem'
+      required: [type, modifies]
+    ActUpdateLeverage:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: updateLeverage
+        asset:
+          $ref: '#/components/schemas/AssetId'
+        isCross:
+          type: boolean
+        leverage:
+          type: integer
+      required: [type, asset, isCross, leverage]
+    ActUpdateIsolatedMargin:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: updateIsolatedMargin
+        asset:
+          $ref: '#/components/schemas/AssetId'
+        isBuy:
+          type: boolean
+          description: Present but has no effect until hedge mode
+        ntli:
+          type: integer
+          description: Amount to add/remove with 6 decimals (e.g., 1000000 for 1 USD)
+      required: [type, asset, isBuy, ntli]
+    ActTopUpIsolatedOnlyMargin:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: topUpIsolatedOnlyMargin
+        asset:
+          $ref: '#/components/schemas/AssetId'
+        leverage:
+          type: string
+          description: Target leverage as a decimal string
+      required: [type, asset, leverage]
+    ActUsdSend:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: usdSend
+        hyperliquidChain:
+          $ref: '#/components/schemas/HyperliquidChain'
+        signatureChainId:
+          $ref: '#/components/schemas/SignatureChainId'
+        destination:
+          $ref: '#/components/schemas/HexAddress'
+        amount:
+          type: string
+        time:
+          type: number
+      required: [type, hyperliquidChain, signatureChainId, destination, amount, time]
+    ActSpotSend:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: spotSend
+        hyperliquidChain:
+          $ref: '#/components/schemas/HyperliquidChain'
+        signatureChainId:
+          $ref: '#/components/schemas/SignatureChainId'
+        destination:
+          $ref: '#/components/schemas/HexAddress'
+        token:
+          type: string
+          description: tokenName:tokenId
+        amount:
+          type: string
+        time:
+          type: number
+      required: [type, hyperliquidChain, signatureChainId, destination, token, amount, time]
+    ActWithdraw3:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: withdraw3
+        hyperliquidChain:
+          $ref: '#/components/schemas/HyperliquidChain'
+        signatureChainId:
+          $ref: '#/components/schemas/SignatureChainId'
+        amount:
+          type: string
+        time:
+          type: number
+        destination:
+          $ref: '#/components/schemas/HexAddress'
+      required: [type, hyperliquidChain, signatureChainId, amount, time, destination]
+    ActUsdClassTransfer:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: usdClassTransfer
+        hyperliquidChain:
+          $ref: '#/components/schemas/HyperliquidChain'
+        signatureChainId:
+          $ref: '#/components/schemas/SignatureChainId'
+        amount:
+          type: string
+        toPerp:
+          type: boolean
+        nonce:
+          type: number
+        subaccount:
+          $ref: '#/components/schemas/HexAddress'
+      required: [type, hyperliquidChain, signatureChainId, amount, toPerp, nonce]
+    ActSendAsset:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: sendAsset
+        hyperliquidChain:
+          $ref: '#/components/schemas/HyperliquidChain'
+        signatureChainId:
+          $ref: '#/components/schemas/SignatureChainId'
+        destination:
+          $ref: '#/components/schemas/HexAddress'
+        sourceDex:
+          type: string
+        destinationDex:
+          type: string
+        token:
+          type: string
+          description: tokenName:tokenId
+        amount:
+          type: string
+        fromSubAccount:
+          type: string
+          description: Address or empty string if not from a subaccount
+        nonce:
+          type: number
+      required: [type, hyperliquidChain, signatureChainId, destination, sourceDex, destinationDex, token, amount, fromSubAccount, nonce]
+    ActCDeposit:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: cDeposit
+        hyperliquidChain:
+          $ref: '#/components/schemas/HyperliquidChain'
+        signatureChainId:
+          $ref: '#/components/schemas/SignatureChainId'
+        wei:
+          type: number
+        nonce:
+          type: number
+      required: [type, hyperliquidChain, signatureChainId, wei, nonce]
+    ActCWithdraw:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: cWithdraw
+        hyperliquidChain:
+          $ref: '#/components/schemas/HyperliquidChain'
+        signatureChainId:
+          $ref: '#/components/schemas/SignatureChainId'
+        wei:
+          type: number
+        nonce:
+          type: number
+      required: [type, hyperliquidChain, signatureChainId, wei, nonce]
+    ActTokenDelegate:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: tokenDelegate
+        hyperliquidChain:
+          $ref: '#/components/schemas/HyperliquidChain'
+        signatureChainId:
+          $ref: '#/components/schemas/SignatureChainId'
+        validator:
+          $ref: '#/components/schemas/HexAddress'
+        isUndelegate:
+          type: boolean
+        wei:
+          type: number
+        nonce:
+          type: number
+      required: [type, hyperliquidChain, signatureChainId, validator, isUndelegate, wei, nonce]
+    ActVaultTransfer:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: vaultTransfer
+        vaultAddress:
+          $ref: '#/components/schemas/HexAddress'
+        isDeposit:
+          type: boolean
+        usd:
+          type: number
+      required: [type, vaultAddress, isDeposit, usd]
+    ActApproveAgent:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: approveAgent
+        hyperliquidChain:
+          $ref: '#/components/schemas/HyperliquidChain'
+        signatureChainId:
+          $ref: '#/components/schemas/SignatureChainId'
+        agentAddress:
+          $ref: '#/components/schemas/HexAddress'
+        agentName:
+          type: string
+        nonce:
+          type: number
+      required: [type, hyperliquidChain, signatureChainId, agentAddress, nonce]
+    ActApproveBuilderFee:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: approveBuilderFee
+        hyperliquidChain:
+          $ref: '#/components/schemas/HyperliquidChain'
+        signatureChainId:
+          $ref: '#/components/schemas/SignatureChainId'
+        maxFeeRate:
+          type: string
+          description: Maximum allowed builder fee rate as a percent string; e.g. "0.001%"
+        builder:
+          $ref: '#/components/schemas/HexAddress'
+        nonce:
+          type: number
+      required: [type, hyperliquidChain, signatureChainId, maxFeeRate, builder, nonce]
+    ActTwapOrder:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: twapOrder
+        twap:
+          type: object
+          additionalProperties: false
+          properties:
+            a:
+              $ref: '#/components/schemas/AssetId'
+            b:
+              type: boolean
+            s:
+              type: string
+            r:
+              type: boolean
+            m:
+              type: number
+              description: Minutes
+            t:
+              type: boolean
+              description: Randomize
+          required: [a, b, s, r, m, t]
+      required: [type, twap]
+    ActTwapCancel:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: twapCancel
+        a:
+          $ref: '#/components/schemas/AssetId'
+        t:
+          type: number
+          description: twap_id
+      required: [type, a, t]
+    ActReserveRequestWeight:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: reserveRequestWeight
+        weight:
+          type: number
+      required: [type, weight]
+    ActNoop:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: noop
+      required: [type]
+    ActUserEnableDexAbstraction:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: userEnableDexAbstraction
+        hyperliquidChain:
+          $ref: '#/components/schemas/HyperliquidChain'
+        signatureChainId:
+          $ref: '#/components/schemas/SignatureChainId'
+        user:
+          $ref: '#/components/schemas/HexAddress'
+        enabled:
+          type: boolean
+        nonce:
+          type: number
+      required: [type, hyperliquidChain, signatureChainId, user, enabled, nonce]
+    ActAgentEnableDexAbstraction:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          const: agentEnableDexAbstraction
+      required: [type]
+    OrderActionResponseData:
+      type: object
+      properties:
+        statuses:
+          type: array
+          items:
+            oneOf:
+              - type: object
+                additionalProperties: false
+                properties:
+                  resting:
+                    type: object
+                    properties:
+                      oid:
+                        type: integer
+                    required: [oid]
+                required: [resting]
+              - type: object
+                additionalProperties: false
+                properties:
+                  filled:
+                    type: object
+                    properties:
+                      totalSz:
+                        type: string
+                      avgPx:
+                        type: string
+                      oid:
+                        type: integer
+                    required: [totalSz, avgPx, oid]
+                required: [filled]
+              - type: object
+                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                required: [error]
+    CancelActionResponseData:
+      type: object
+      properties:
+        statuses:
+          type: array
+          items:
+            oneOf:
+              - type: string
+                enum: [success]
+              - type: object
+                properties:
+                  error:
+                    type: string
+                required: [error]
+                additionalProperties: false
+    TwapOrderActionResponseData:
+      type: object
+      properties:
+        status:
+          oneOf:
+            - type: object
+              additionalProperties: false
+              properties:
+                running:
+                  type: object
+                  properties:
+                    twapId:
+                      type: integer
+                  required: [twapId]
+              required: [running]
+            - type: object
+              additionalProperties: false
+              properties:
+                error:
+                  type: string
+              required: [error]
+    TwapCancelActionResponseData:
+      type: object
+      properties:
+        status:
+          oneOf:
+            - type: string
+              enum: [success]
+            - type: object
+              additionalProperties: false
+              properties:
+                error:
+                  type: string
+              required: [error]
+    DefaultActionResponseData:
+      type: object
+      additionalProperties: true
+

@@ -1,0 +1,2091 @@
+openapi: 3.0.0
+info:
+  title: Bitget_Mix
+  version: 1.0.0
+  description: ''
+servers:
+  - url: ''
+paths:
+  /api/mix/v1/market/contracts:
+    get:
+      summary: Get All Symbols
+      tags:
+        - Market
+      parameters:
+        - name: productType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/market/depth:
+    get:
+      summary: Get Depth
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/market/ticker:
+    get:
+      summary: Get Single Symbol Ticker
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/market/tickers:
+    get:
+      summary: Get All Symbol Ticker
+      tags:
+        - Market
+      parameters:
+        - name: productType
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/market/contract-vip-level:
+    get:
+      summary: Get Vip Level
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: level
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /api/mix/v1/market/fills:
+    get:
+      summary: Get Fills
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses: {}
+  /api/mix/v1/market/fills-history:
+    get:
+      summary: Get Fills History
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: upex_header_trace_id
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/market/candles:
+    get:
+      summary: Get Candle Data
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: granularity
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: startTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: endTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/market/index:
+    get:
+      summary: Get Symbol Index Price
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/market/funding-time:
+    get:
+      summary: Get Symbol Next Funding Time
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/market/history-fundRate:
+    get:
+      summary: Get History Funding Rate
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: pageNo
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: nextPage
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/market/current-fundRate:
+    get:
+      summary: Get Current Funding Rate
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/market/open-interest:
+    get:
+      summary: Get Open Interest
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/market/mark-price:
+    get:
+      summary: Get Symbol Mark Price
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/market/symbol-leverage:
+    get:
+      summary: Get Symbol Leverage
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/market/queryPositionLever:
+    get:
+      summary: Query Position Lever
+      tags:
+        - Market
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: productType
+          in: query
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/account/account:
+    get:
+      summary: Get Single Account
+      tags:
+        - Account
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: marginCoin
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/account/accounts:
+    get:
+      summary: Get Account List
+      tags:
+        - Account
+      parameters:
+        - name: productType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/account/sub-account-contract-assets:
+    post:
+      summary: Get Sub Account Assets
+      tags:
+        - Account
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/account/setLeverage:
+    post:
+      summary: Change Leverage
+      tags:
+        - Account
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                symbol:
+                  type: string
+                marginCoin:
+                  type: string
+                holdSide:
+                  type: string
+                leverage:
+                  type: string
+                  format: utc-millisec
+  /api/mix/v1/account/setMargin:
+    post:
+      summary: Change Margin
+      tags:
+        - Account
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                symbol:
+                  type: string
+                marginCoin:
+                  type: string
+                holdSide:
+                  type: string
+                amount:
+                  type: string
+                  format: utc-millisec
+  /api/mix/v1/account/setMarginMode:
+    post:
+      summary: Change Margin Mode
+      tags:
+        - Account
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                symbol:
+                  type: string
+                marginCoin:
+                  type: string
+                marginMode:
+                  type: string
+  /api/mix/v1/position/singlePosition:
+    get:
+      summary: Get Symbol Position
+      tags:
+        - Account
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: marginCoin
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/position/allPosition:
+    get:
+      summary: Get All Position
+      tags:
+        - Account
+      parameters:
+        - name: productType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: marginCoin
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/account/accountBill:
+    get:
+      summary: Get Account Bill
+      tags:
+        - Account
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: marginCoin
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: startTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: endTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: lastEndId
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: next
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/account/accountBusinessBill:
+    get:
+      summary: Get Bussiness Account Bill
+      tags:
+        - Account
+      parameters:
+        - name: productType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: startTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: endTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: lastEndId
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: next
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/position/singlePosition-v2:
+    get:
+      summary: Get Symbol Position V2
+      tags:
+        - Account
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: marginCoin
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/position/allPosition-v2:
+    get:
+      summary: Get All Position. v2
+      tags:
+        - Account
+      parameters:
+        - name: productType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: marginCoin
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/account/open-count:
+    post:
+      summary: Get Open Size
+      tags:
+        - Account
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: marginCoin
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: openPrice
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: openAmount
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                leverage:
+                  type: integer
+                marginCoin:
+                  type: string
+                openAmount:
+                  type: number
+                openPrice:
+                  type: number
+                symbol:
+                  type: string
+  /api/mix/v1/account/setPositionMode:
+    post:
+      summary: Get Set PositionMode
+      tags:
+        - Account
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productType:
+                  type: string
+                holdMode:
+                  type: string
+  /api/mix/v1/order/placeOrder:
+    post:
+      summary: Place Order
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                symbol:
+                  type: string
+                marginCoin:
+                  type: string
+                size:
+                  type: string
+                price:
+                  type: string
+                side:
+                  type: string
+                orderType:
+                  type: string
+                timeInForceValue:
+                  type: string
+                reduceOnly:
+                  type: string
+  /api/mix/v1/order/batch-orders:
+    post:
+      summary: Batch Order
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/order/cancel-order:
+    post:
+      summary: Cancel Order
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: string
+                  format: utc-millisec
+                symbol:
+                  type: string
+                marginCoin:
+                  type: string
+  /api/mix/v1/order/cancel-batch-orders:
+    post:
+      summary: Batch Cancel Order
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                symbol:
+                  type: string
+                marginCoin:
+                  type: string
+                orderIds:
+                  type: array
+                  items:
+                    type: string
+                    format: utc-millisec
+  /api/mix/v1/order/modifyOrder:
+    post:
+      summary: Modify Order
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                symbol:
+                  type: string
+                size:
+                  type: string
+                price:
+                  type: string
+                orderId:
+                  type: string
+                  format: utc-millisec
+                newClientOid:
+                  type: string
+                  format: color
+  /api/mix/v1/order/cancel-symbol-orders:
+    post:
+      summary: Symbol Cancel Order
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                symbol:
+                  type: string
+                marginCoin:
+                  type: string
+  /api/mix/v1/order/cancel-all-orders:
+    post:
+      summary: ProductType Cancel Order
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productType:
+                  type: string
+                marginCoin:
+                  type: string
+  /api/mix/v1/order/close-all-positions:
+    post:
+      summary: Cancel All Position
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productType:
+                  type: string
+  /api/mix/v1/order/current:
+    get:
+      summary: Get Open Order
+      tags:
+        - Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/order/marginCoinCurrent:
+    get:
+      summary: Get All Open Order
+      tags:
+        - Trade
+      parameters:
+        - name: productType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: marginCoin
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/order/history:
+    get:
+      summary: Get History Orders
+      tags:
+        - Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: startTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: endTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/order/historyProductType:
+    get:
+      summary: Get ProductType History Orders
+      tags:
+        - Trade
+      parameters:
+        - name: productType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: startTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: endTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: lastEndId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: isPre
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/order/detail:
+    get:
+      summary: Get Order Details
+      tags:
+        - Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: orderId
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: clientOid
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/order/fills:
+    get:
+      summary: Get Order fill detail
+      tags:
+        - Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: startTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: endTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: orderId
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/order/allFills:
+    get:
+      summary: Get ProductType Order fill detail
+      tags:
+        - Trade
+      parameters:
+        - name: productType
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: startTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: endTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/plan/placePlan:
+    post:
+      summary: Place Plan order
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orderType:
+                  type: string
+                symbol:
+                  type: string
+                side:
+                  type: string
+                triggerPrice:
+                  type: string
+                size:
+                  type: string
+                marginCoin:
+                  type: string
+                triggerType:
+                  type: string
+  /api/mix/v1/plan/modifyPlan:
+    post:
+      summary: Modify Plan Order
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/plan/modifyPlanPreset:
+    post:
+      summary: Modify Plan Order TPSL
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/plan/placeTPSL:
+    post:
+      summary: Place Stop Order
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/plan/placeTrailStop:
+    post:
+      summary: Place Stop Posistion
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/plan/placePositionsTPSL:
+    post:
+      summary: Position TPSL
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/plan/modifyTPSLPlan:
+    post:
+      summary: Modify Stop Order
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/plan/cancelPlan:
+    post:
+      summary: Cancel Plan Order (TPSL)
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/plan/cancelSymbolPlan:
+    post:
+      summary: Cancel Symbol Plan
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/plan/cancelAllPlan:
+    post:
+      summary: Cancel All Plan Order (TPSL)
+      tags:
+        - Trade
+      parameters:
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/plan/currentPlan:
+    get:
+      summary: Get Plan Order (TPSL) List
+      tags:
+        - Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: isPlan
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
+  /api/mix/v1/plan/historyPlan:
+    get:
+      summary: Get History Plan Orders (TPSL)
+      tags:
+        - Trade
+      parameters:
+        - name: symbol
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: startTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: endTime
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: isPre
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: isPlan
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-KEY
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-SIGN
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-TIMESTAMP
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: ACCESS-PASSPHRASE
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: locale
+          in: header
+          required: false
+          schema:
+            type: string
+      responses: {}
