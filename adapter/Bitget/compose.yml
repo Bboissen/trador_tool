@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  bitget-adapter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bitget-adapter
+    restart: always
+    user: "bitget"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    env_file:
+      - .env
+    environment:
+      # Add any necessary environment variables here, e.g., API keys, secrets
+      BITGET_API_KEY: ${BITGET_API_KEY:?BITGET_API_KEY is required}
+      BITGET_API_SECRET: ${BITGET_API_SECRET:?BITGET_API_SECRET is required}
+      BITGET_PASSPHRASE: ${BITGET_PASSPHRASE:?BITGET_PASSPHRASE is required}
+      BITGET_BASE_URL: ${BITGET_BASE_URL:-https://api.bitget.com}
+      BITGET_WS_PUB: ${BITGET_WS_PUB:-wss://ws.bitget.com/v2/ws/public}
+      BITGET_WS_PRIV: ${BITGET_WS_PRIV:-wss://ws.bitget.com/v2/ws/private}
+      BITGET_HEALTHCHECK_URL: ${BITGET_HEALTHCHECK_URL:-https://api.bitget.com/api/v2/spot/market/tickers?symbol=BTCUSDT}
+      BITGET_LOCALE: ${BITGET_LOCALE:-en-US}
+    healthcheck:
+      test: ["CMD-SHELL", "/app/healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
