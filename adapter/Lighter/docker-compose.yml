@@ -1,0 +1,23 @@
+services:
+  lighter-adapter:
+    platform: linux/amd64
+    container_name: lighter-adapter
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PYTHON_IMAGE: python:3.12-slim
+        LIGHTER_REPO_URL: https://github.com/elliottech/lighter-python.git
+        LIGHTER_REPO_REF: v0.1.4
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      LIGHTER_STATE_FILE: ${LIGHTER_STATE_FILE:-/tmp/lighter_adapter/state.json}
+    healthcheck:
+      test: ["CMD-SHELL", "python /opt/app/healthcheck.py"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
