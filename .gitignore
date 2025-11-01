@@ -46,6 +46,8 @@ vendor/
 tmp/
 temp/
 *.tmp
+__pycache__/
+*.pyc
 
 # Rust
 Cargo.lock
